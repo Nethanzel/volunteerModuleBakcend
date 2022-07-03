@@ -1,7 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-                                //Database name //username  //password
-const sequelize = new Sequelize('crdtdb', '3q3ywls2ebzg', 'pscale_pw_DpjKczGLiid5obIxHjx-KtGrEthw5f3YpXVnXeRAjoY', 
+const sequelize = new Sequelize('crdtdb', '2nmmm7w1yzgt', 'pscale_pw_OgIcjwUFa0SaPgMHvWFOpcRVUiuXn2-L4oHQN4lpluw', //Database name, username, password
     {
         host: '6joo4zyx34tk.us-east-1.psdb.cloud', //database server
         dialect: 'mysql',
@@ -10,8 +9,7 @@ const sequelize = new Sequelize('crdtdb', '3q3ywls2ebzg', 'pscale_pw_DpjKczGLiid
                 rejectUnauthorized: true        
             }
         }
-    }
-);
+});
 
 async function testConnection() {
     try {
@@ -45,8 +43,6 @@ async function dropModels() {
         }
     }
 }
-
-/* syncModels(); */
 
 module.exports = {
     testConnection,

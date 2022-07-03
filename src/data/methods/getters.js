@@ -1,48 +1,46 @@
-const { testConnection } = require("../sqlConnection.js");
 const { Voluntario, Departamento, Estacion, TipoVoluntario } = require("../models/index.js");
 
-/* async function getVolunteer() {
-
-    if(!await testConnection()) {
-        return;
-    }
-    const volunteer = Voluntario.build();
-
-    let result = await volunteer.save();
-    return result;
+async function getVolunteer(identity) {
+    const volunteer = Voluntario.findOne({ where: { identity } });
+    return volunteer;
 }
- */
 
-async function getEstacion() {
-    if(!await testConnection()) {
-        return;
-    }
-
+async function getEstaciones() {
     let station = Estacion.findAll();
     return station;
 }
 
-async function getDepartamento() {
-    if(!await testConnection()) {
-        return;
-    }
-
+async function getDepartamentos() {
     let department = Departamento.findAll();
     return department;
 }
 
-async function getTipoVoluntario() {
-    if(!await testConnection()) {
-        return;
-    }
-
+async function getTipoVoluntarios() {
     const tVolunteer = TipoVoluntario.findAll();
     return tVolunteer;
 }
 
+async function getEstacion(id) {
+    const estacion = Estacion.findOne({ where: { id } });
+    return estacion;
+}
+
+async function getDepartamento(id) {
+    const departamento = Departamento.findOne({ where: { id } });
+    return departamento;
+}
+
+async function getTipoVoluntario(id) {
+    const tipo = TipoVoluntario.findOne({ where: { id } });
+    return tipo;
+}
+
 module.exports = {
-   // getVolunteer,
+    getVolunteer,
     getEstacion,
     getDepartamento,
-    getTipoVoluntario
+    getTipoVoluntario,
+    getEstaciones,
+    getDepartamentos,
+    getTipoVoluntarios
 }

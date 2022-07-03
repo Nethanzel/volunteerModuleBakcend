@@ -1,7 +1,16 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const routes = require("./src/api/publicRoutes.js");
-app.use("/common", routes);
+const formidable = require("express-formidable");
+
+const publicPoutes = require("./src/api/publicRoutes.js");
+const getterRoutes = require("./src/api/getters.js");
+const creatorRoutes = require("./src/api/creators.js");
+
+app.use(formidable());
+app.use("/api/common", publicPoutes);
+app.use("/api/getters", getterRoutes);
+app.use("/api/creators", creatorRoutes);
+
 app.set("PORT", process.env.PORT || 81);
 
 app.listen(app.get("PORT"), ()=> {
