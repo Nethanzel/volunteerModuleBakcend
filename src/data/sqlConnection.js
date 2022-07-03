@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('crdtdb', '2nmmm7w1yzgt', 'pscale_pw_OgIcjwUFa0SaPgMHvWFOpcRVUiuXn2-L4oHQN4lpluw', //Database name, username, password
+const sequelize = new Sequelize('crdtdb', '', '', //Database name, username, password
     {
         host: '6joo4zyx34tk.us-east-1.psdb.cloud', //database server
         dialect: 'mysql',
