@@ -1,8 +1,8 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('crdtdb', '', '', //Database name, username, password
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD,
     {
-        host: '6joo4zyx34tk.us-east-1.psdb.cloud', //database server
+        host: process.env.DB_SERVER,
         dialect: 'mysql',
         dialectOptions: {
             ssl: {

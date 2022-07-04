@@ -1,38 +1,66 @@
 const { Voluntario, Departamento, Estacion, TipoVoluntario } = require("../models/index.js");
 
 async function getVolunteer(identity) {
-    const volunteer = Voluntario.findOne({ where: { identity } });
-    return volunteer;
+    try {
+        const volunteer = Voluntario.findOne({ where: { identity } });
+        return volunteer;
+    } catch {
+        return false;
+    }
 }
 
 async function getEstaciones() {
-    let station = Estacion.findAll();
-    return station;
+    try {
+        let station = Estacion.findAll();
+        return station;
+    } catch {
+        return false;
+    }
 }
 
 async function getDepartamentos() {
-    let department = Departamento.findAll();
-    return department;
+    try {
+        let department = Departamento.findAll();
+        return department;
+    } catch {
+        return false;
+    }
 }
 
 async function getTipoVoluntarios() {
-    const tVolunteer = TipoVoluntario.findAll();
-    return tVolunteer;
+    try {
+        const tVolunteer = await TipoVoluntario.findAll();
+        return tVolunteer;
+    } catch {
+        return false;
+    }
 }
 
 async function getEstacion(id) {
-    const estacion = Estacion.findOne({ where: { id } });
-    return estacion;
+    try {
+        const estacion = Estacion.findOne({ where: { id } });
+        return estacion;
+    } catch {
+        return false;
+    }
 }
 
 async function getDepartamento(id) {
-    const departamento = Departamento.findOne({ where: { id } });
-    return departamento;
+    try {
+        const departamento = Departamento.findOne({ where: { id } });
+        return departamento;
+    } catch {
+        return false;
+    }
 }
 
 async function getTipoVoluntario(id) {
-    const tipo = TipoVoluntario.findOne({ where: { id } });
-    return tipo;
+    try {
+        const tipo = TipoVoluntario.findOne({ where: { id } });
+        return tipo;
+    } catch {
+        return false;
+    }
 }
 
 module.exports = {

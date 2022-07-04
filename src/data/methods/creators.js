@@ -40,9 +40,56 @@ async function createTipoVoluntario(props) {
     }
 }
 
+function volunteerPrepare(props) {
+    if(!props) return false;
+    
+    let newVolunteer = {
+        estacionId: 1,
+
+        //Datos de salud del voluntario
+        sangre: "O+",
+        enfermedad: false,
+        enfermedadDetalles: "",
+        alergia: false,
+        alergiaDetalles: "",
+        contactoEmergencia: "*",
+        
+        //Datos de formacion academica
+        estudios: "*",
+        idiomas: "*",
+
+        //Datos del area a la que pertenece el voluntario
+        departamentoId: 1,
+        tipoVoluntarioId: 1,
+                
+        //Datos de contacto
+        telefonoFijo: "*",
+        celular: "*",
+        correo: "*",
+
+        //Datos de la direccion
+        provincia: "*",
+        sector: "*",
+        calle: "*",
+        casa: "*",
+
+        //Datos personales
+        identity: "*",
+        nombre: "*",
+        apellido: "*",
+        lugarNacimiento: "*",
+        nacimiento: new Date(),
+        nacionalidad: "*",
+        estadoCivil: "*"
+    }
+
+    return newVolunteer;
+}
+
 module.exports = {
     createDepartamento,
     createEstacion,
     createTipoVoluntario,
-    createVolunteer
+    createVolunteer,
+    volunteerPrepare
 }

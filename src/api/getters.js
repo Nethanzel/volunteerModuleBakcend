@@ -5,7 +5,7 @@ router.get("/voluntario", async (req, res) => {
     let { id } = req.query;
     if(!id) return res.status(400).send({status: 400, message: "Missing required parameter(s)."});
 
-    let voluntario = await getVolunteer(id);
+    let voluntario = await getVolunteer(id).catch(() => false);
     if(!voluntario) return res.status(404).send({status: 404, message: "No results where found."});
 
     res.status(200).send(voluntario);
@@ -15,7 +15,7 @@ router.get("/estacion", async (req, res) => {
     let { id } = req.query;
     if(!id) return res.status(400).send({status: 400, message: "Missing required parameter(s)."});
 
-    let estacion = await getEstacion(id);
+    let estacion = await getEstacion(id).catch(() => false);
     if(!estacion) return res.status(404).send({status: 404, message: "No results where found."});
     
     res.status(200).send(estacion);
@@ -25,7 +25,7 @@ router.get("/tipovoluntario", async (req, res) => {
     let { id } = req.query;
     if(!id) return res.status(400).send({status: 400, message: "Missing required parameter(s)."});
 
-    let tipo = await getTipoVoluntario(id);
+    let tipo = await getTipoVoluntario(id).catch(() => false);
     if(!tipo) return res.status(404).send({status: 404, message: "No results where found."});
     
     res.status(200).send(tipo);
@@ -35,7 +35,7 @@ router.get("/departamento", async (req, res) => {
     let { id } = req.query;
     if(!id) return res.status(400).send({status: 400, message: "Missing required parameter(s)."});
 
-    let departamento = await getDepartamento(id);
+    let departamento = await getDepartamento(id).catch(() => false);
     if(!departamento) return res.status(404).send({status: 404, message: "No results where found."});
     
     res.status(200).send(departamento);
