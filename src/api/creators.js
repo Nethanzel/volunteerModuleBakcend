@@ -7,15 +7,15 @@ router.post("/voluntario", async (req, res) => {
         "estudios", "idiomas", "departamentoId", "tipoVoluntarioId", "telefonoFijo", "celular", "correo", "provincia", "sector", "calle", 
         "casa", "identity", "nombre", "apellido", "lugarNacimiento", "nacimiento", "nacionalidad", "estadoCivil"];
 
-    if(fields.length != Object.keys(req.fields).length) return res.status(400).send({status: 400, message: "Invalid model."});
+    if(fields.length != Object.keys(req.fields.data).length) return res.status(400).send({status: 400, message: "Invalid model."});
 
-    for(var key in req.fields) {
+    for(var key in req.fields.data) {
         if(!fields.includes(key)) return res.status(400).send({status: 400, message: "The model has invalid fields."});
     }
 
 
 
-    let result = await createVolunteer(req.fields).catch(() => false);
+    let result = await createVolunteer(req.fields.data).catch(() => false);
     if(!result) return res.status(503).send({status: 503, message: "Unable to create the new resource."})
     res.status(201).send();
 });
