@@ -2,10 +2,7 @@ const router = require('express').Router();
 const { createVolunteer, createDepartamento, createEstacion, createTipoVoluntario, volunteerPrepare } = require("../data/methods/creators");
 
 router.post("/voluntario", async (req, res) => {
-    console.log(req.fields.data);
-    const fields = ["estacionId", "sangre", "enfermedad", "enfermedadDetalles", "alergia", "alergiaDetalles", "contactoEmergencia",
-        "estudios", "idiomas", "departamentoId", "tipoVoluntarioId", "telefonoFijo", "celular", "correo", "provincia", "sector", "calle", 
-        "casa", "identity", "nombre", "apellido", "lugarNacimiento", "nacimiento", "nacionalidad", "estadoCivil"];
+    const fields = ["step_1", "step_2", "step_3", "step_4", "step_5"];
 
     if(fields.length != Object.keys(req.fields.data).length) return res.status(400).send({status: 400, message: "Invalid model."});
 
@@ -13,9 +10,9 @@ router.post("/voluntario", async (req, res) => {
         if(!fields.includes(key)) return res.status(400).send({status: 400, message: "The model has invalid fields."});
     }
 
+    let newVolunteer = volunteerPrepare(req.fields.data);
 
-
-    let result = await createVolunteer(req.fields.data).catch(() => false);
+    let result = await createVolunteer(newVolunteer).catch(() => false);
     if(!result) return res.status(503).send({status: 503, message: "Unable to create the new resource."})
     res.status(201).send();
 });

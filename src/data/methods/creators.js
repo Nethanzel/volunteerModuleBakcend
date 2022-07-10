@@ -40,47 +40,51 @@ async function createTipoVoluntario(props) {
     }
 }
 
-function volunteerPrepare(props) {
+async function volunteerPrepare(props) {
     if(!props) return false;
     
     let newVolunteer = {
-        estacionId: 1,
+        checked: false,
+        estacionId: Number(props["step_1"].estacion),
 
         //Datos de salud del voluntario
-        sangre: "O+",
-        enfermedad: false,
-        enfermedadDetalles: "",
-        alergia: false,
-        alergiaDetalles: "",
-        contactoEmergencia: "*",
-        
+        sangre: props["step_4"].bloodType,
+        enfermedad: props["step_4"].desease.state,
+        enfermedadDetalles: props["step_4"].desease.state ? props["step_4"].desease.contents : "",
+        alergia: props["step_4"].medicine.state,
+        alergiaDetalles: props["step_4"].medicine.state ? props["step_4"].medicine.contents : "",
+        contactoEmergencia: props["step_4"].emergencyContacts,
+
         //Datos de formacion academica
-        estudios: "*",
-        idiomas: "*",
+        estudios: props["step_3"].study,
+        idiomas: props["step_3"].languages.toString(),
+        otherLanguaje: props["step_3"].otherLanguage,
 
         //Datos del area a la que pertenece el voluntario
-        departamentoId: 1,
-        tipoVoluntarioId: 1,
-                
+        departamentoId: Number(props["step_5"].departamento),
+        tipoVoluntarioId: Number(props["step_5"].tipoVoluntario),
+        hasIdentification: props["step_5"].identificacion == "Si" ? true : false,
+        idetifications: props["step_5"].identificacion == "Si" ? props["step_5"].identificacionDetails : null,
+
         //Datos de contacto
-        telefonoFijo: "*",
-        celular: "*",
-        correo: "*",
+        telefonoFijo: props["step_2"].telefono,
+        celular: props["step_2"].celular,
+        correo: props["step_2"].email,
 
         //Datos de la direccion
-        provincia: "*",
-        sector: "*",
-        calle: "*",
-        casa: "*",
+        provincia: Number(props["step_2"].provincia),
+        sector: props["step_2"].sector,
+        calle: props["step_2"].calle,
+        casa: props["step_2"].casa_no,
 
         //Datos personales
-        identity: "*",
-        nombre: "*",
-        apellido: "*",
-        lugarNacimiento: "*",
-        nacimiento: new Date(),
-        nacionalidad: "*",
-        estadoCivil: "*"
+        identity: props["step_2"].identity,
+        nombre: props["step_2"].nombre,
+        apellido: props["step_2"].apellido,
+        lugarNacimiento: Number(props["step_2"].nacimientolugar),
+        nacimiento: props["step_2"].nacimientofecha,
+        nacionalidad: props["step_2"].nacionalidad,
+        estadoCivil: props["step_2"].ecivil
     }
 
     return newVolunteer;

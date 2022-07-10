@@ -50,3 +50,5 @@ module.exports = {
     dropModels,
     sequelize
 }
+
+//syncModels()

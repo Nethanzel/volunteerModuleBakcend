@@ -1,4 +1,4 @@
-const { createDepartamento, createTipoVoluntario, createEstacion } = require("../methods.js");
+const { createDepartamento, createTipoVoluntario, createEstacion } = require("../methods/creators.js");
 
 const Departments = {
     "socorro": {

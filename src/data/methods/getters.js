@@ -2,7 +2,11 @@ const { Voluntario, Departamento, Estacion, TipoVoluntario } = require("../model
 
 async function getVolunteer(identity) {
     try {
-        const volunteer = Voluntario.findOne({ where: { identity } });
+        const volunteer = await Voluntario.findOne({ where: { identity } });
+        
+        volunteer.estudios = JSON.parse(volunteer.estudios);
+        volunteer.contactoEmergencia = JSON.parse(volunteer.contactoEmergencia);
+
         return volunteer;
     } catch {
         return false;
