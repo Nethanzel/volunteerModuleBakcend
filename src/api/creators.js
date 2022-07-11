@@ -13,6 +13,8 @@ router.post("/voluntario", async (req, res) => {
     let newVolunteer = volunteerPrepare(req.fields.data);
 
     let result = await createVolunteer(newVolunteer).catch(() => false);
+    
+    if(result === 1) return res.status(200).send({status: 200, message: "That record has already been done."})
     if(!result) return res.status(503).send({status: 503, message: "Unable to create the new resource."})
     res.status(201).send();
 });

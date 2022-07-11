@@ -2,10 +2,14 @@ const { Voluntario, Departamento, Estacion, TipoVoluntario } = require("../model
 
 async function createVolunteer(props) {
     try {
+        let exists = await Voluntario.count( {where: { identity: props.identity }} );
+        if(exists > 0) return 1;
+
         const volunteer = Voluntario.build(props);
         let result = await volunteer.save();
         return result;
-    } catch {
+    } catch (e) {
+        //console.log(e);
         return false
     }
 }
@@ -40,7 +44,7 @@ async function createTipoVoluntario(props) {
     }
 }
 
-async function volunteerPrepare(props) {
+function volunteerPrepare(props) {
     if(!props) return false;
     
     let newVolunteer = {

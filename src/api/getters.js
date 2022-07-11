@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { getVolunteer, getDepartamento, getEstacion, getTipoVoluntario } = require("../data/methods/getters.js");
+const { getVolunteer, getDepartamento, getEstacion, getTipoVoluntario, getVolunteers } = require("../data/methods/getters.js");
 
 router.get("/voluntario", async (req, res) => {
     let { id } = req.query;
@@ -9,6 +9,16 @@ router.get("/voluntario", async (req, res) => {
     if(!voluntario) return res.status(404).send({status: 404, message: "No results where found."});
 
     res.status(200).send(voluntario);
+});
+
+router.get("/voluntarios", async (req, res) => {
+    let { page } = req.query;
+    if(!page) return res.status(400).send({status: 400, message: "Missing required parameter(s)."});
+
+    let voluntarios = await getVolunteers(page).catch(() => false);
+    if(!voluntarios) return res.status(404).send({status: 404, message: "No results where found."});
+
+    res.status(200).send(voluntarios);
 });
 
 router.get("/estacion", async (req, res) => {

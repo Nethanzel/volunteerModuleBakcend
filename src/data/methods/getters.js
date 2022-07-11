@@ -2,12 +2,36 @@ const { Voluntario, Departamento, Estacion, TipoVoluntario } = require("../model
 
 async function getVolunteer(identity) {
     try {
-        const volunteer = await Voluntario.findOne({ where: { identity } });
-        
+        let volunteer = await Voluntario.findOne({ where: { identity } });
+        volunteer = volunteer.toJSON();
+
+        const departament = await Departamento.findOne({ where: {id: volunteer.departamentoId}});
+        const tipoVoluntario = await TipoVoluntario.findOne({ where: {id: volunteer.tipoVoluntarioId}});
+
+        volunteer['departamento'] = departament.dataValues;
+        volunteer['tipoVoluntario'] = tipoVoluntario.dataValues;
+
         volunteer.estudios = JSON.parse(volunteer.estudios);
         volunteer.contactoEmergencia = JSON.parse(volunteer.contactoEmergencia);
 
+        delete volunteer.departamentoId; 
+        delete volunteer.tipoVoluntarioId;
+
         return volunteer;
+    } catch {
+        return false;
+    }
+}
+
+async function getVolunteers(page) {
+    const limit = 15;
+    try {
+        const volunteerList = await Voluntario.findAndCountAll({
+            offset: 0 + (Number(page) - 1) * limit,
+            limit: limit,
+            order: [['createdAt', 'ASC']]
+        });
+        return volunteerList;
     } catch {
         return false;
     }
@@ -69,6 +93,7 @@ async function getTipoVoluntario(id) {
 
 module.exports = {
     getVolunteer,
+    getVolunteers,
     getEstacion,
     getDepartamento,
     getTipoVoluntario,
