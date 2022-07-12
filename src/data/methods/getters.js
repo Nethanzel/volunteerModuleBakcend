@@ -7,15 +7,18 @@ async function getVolunteer(identity) {
 
         const departament = await Departamento.findOne({ where: {id: volunteer.departamentoId}});
         const tipoVoluntario = await TipoVoluntario.findOne({ where: {id: volunteer.tipoVoluntarioId}});
+        const estacion = await Estacion.findOne({ where: {numero: volunteer.estacionId}});
 
         volunteer['departamento'] = departament.dataValues;
         volunteer['tipoVoluntario'] = tipoVoluntario.dataValues;
+        volunteer['estacion'] = estacion.dataValues;
 
         volunteer.estudios = JSON.parse(volunteer.estudios);
         volunteer.contactoEmergencia = JSON.parse(volunteer.contactoEmergencia);
 
         delete volunteer.departamentoId; 
         delete volunteer.tipoVoluntarioId;
+        delete volunteer.estacionId;
 
         return volunteer;
     } catch {
@@ -25,13 +28,41 @@ async function getVolunteer(identity) {
 
 async function getVolunteers(page) {
     const limit = 15;
+    let result = {};
+
     try {
         const volunteerList = await Voluntario.findAndCountAll({
             offset: 0 + (Number(page) - 1) * limit,
             limit: limit,
-            order: [['createdAt', 'ASC']]
+            order: [['createdAt', 'DESC']]
         });
-        return volunteerList;
+
+        result['limit'] = limit;
+        result['count'] = volunteerList.count;
+        result['rows'] = [];
+
+        await Promise.all(volunteerList.rows.map(async (volunteer) => {
+            volunteer = volunteer.toJSON()
+
+            const departament = await Departamento.findOne({ where: {id: volunteer.departamentoId}});
+            const tipoVoluntario = await TipoVoluntario.findOne({ where: {id: volunteer.tipoVoluntarioId}});
+            const estacion = await Estacion.findOne({ where: {numero: volunteer.estacionId}});
+
+            volunteer['departamento'] = departament.dataValues;
+            volunteer['tipoVoluntario'] = tipoVoluntario.dataValues;
+            volunteer['estacion'] = estacion.dataValues;
+
+            volunteer.estudios = JSON.parse(volunteer.estudios);
+            volunteer.contactoEmergencia = JSON.parse(volunteer.contactoEmergencia);
+
+            delete volunteer.departamentoId; 
+            delete volunteer.tipoVoluntarioId;
+            delete volunteer.estacionId;
+
+            result.rows.push(volunteer);
+        }));
+
+        return result;
     } catch {
         return false;
     }

@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const formidable = require("express-formidable");
+const path = require("path");
+const history = require('connect-history-api-fallback');
 
 //require("./src/data/models/initData.js")
 
@@ -15,6 +17,9 @@ app.use(cors({origin: "*"}));
 app.use("/api/common", publicPoutes);
 app.use("/api/getters", getterRoutes);
 app.use("/api/creators", creatorRoutes);
+
+app.use('/', express.static(path.join(__dirname, "src/client/")));
+app.use(history());
 
 app.set("PORT", process.env.PORT || 81);
 

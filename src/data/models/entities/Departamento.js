@@ -7,7 +7,7 @@ const Departamento = sequelize.define("Departamento", {
         allowNull: false
     },
     descripcion: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
     },
     id: {
