@@ -51,4 +51,4 @@ module.exports = {
     sequelize
 }
 
-syncModels()
+//syncModels()

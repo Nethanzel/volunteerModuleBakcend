@@ -18,8 +18,8 @@ app.use("/api/common", publicPoutes);
 app.use("/api/getters", getterRoutes);
 app.use("/api/creators", creatorRoutes);
 
-app.use('/', express.static(path.join(__dirname, "src/client/")));
 app.use(history());
+app.use('/', express.static(path.join(__dirname, "src/client/")));
 
 app.set("PORT", process.env.PORT || 81);
 
