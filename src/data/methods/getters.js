@@ -13,9 +13,6 @@ async function getVolunteer(identity) {
         volunteer['tipoVoluntario'] = tipoVoluntario.dataValues;
         volunteer['estacion'] = estacion.dataValues;
 
-        volunteer.estudios = JSON.parse(volunteer.estudios);
-        volunteer.contactoEmergencia = JSON.parse(volunteer.contactoEmergencia);
-
         delete volunteer.departamentoId; 
         delete volunteer.tipoVoluntarioId;
         delete volunteer.estacionId;
