@@ -16,7 +16,6 @@ router.get("/voluntarios", async (req, res) => {
     if(!page) return res.status(400).send({status: 400, message: "Missing required parameter(s)."});
 
     let voluntarios = await getVolunteers(page).catch(() => false);
-    console.log(voluntarios);
     if(!voluntarios) return res.status(404).send({status: 404, message: "No results where found."});
 
     res.status(200).send(voluntarios);

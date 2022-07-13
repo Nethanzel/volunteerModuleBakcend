@@ -8,8 +8,7 @@ async function createVolunteer(props) {
         const volunteer = Voluntario.build(props);
         let result = await volunteer.save();
         return result;
-    } catch (e) {
-        //console.log(e);
+    } catch {
         return false
     }
 }

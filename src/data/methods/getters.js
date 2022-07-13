@@ -56,8 +56,7 @@ async function getVolunteers(page) {
             result.rows.push(volunteer);
         }));
         return result;
-    } catch(e) {
-        console.log(e);
+    } catch {
         return false;
     }
 }
