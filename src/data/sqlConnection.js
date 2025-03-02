@@ -1,14 +1,13 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD,
-    {
-        host: process.env.DB_SERVER,
-        dialect: 'mysql',
-        dialectOptions: {
-            ssl: {
-                rejectUnauthorized: true        
-            }
-        }
+const sequelize = new Sequelize({
+    logging: console.log,
+    dialect:  "mysql",
+    host: process.env.DB_SERVER,
+    port: Number(process.env.MSQL_PORT) ?? 0,
+    database: process.env.DB_NAME ?? "",
+    username: process.env.DB_USER ?? "",
+    password: process.env.DB_PASSWORD
 });
 
 async function testConnection() {
@@ -25,7 +24,7 @@ async function testConnection() {
 async function syncModels() {
     if(await testConnection()) {
         try {
-            await sequelize.sync();
+            await sequelize.sync({ alter: true, force: false });
             console.log("Syncronization was done.");
         } catch (error) {
             console.log(error)
@@ -51,4 +50,5 @@ module.exports = {
     sequelize
 }
 
-//syncModels()
+/* WARNING: Only run commented lines if you're willing to lose all the data in the database */
+/* syncModels() */

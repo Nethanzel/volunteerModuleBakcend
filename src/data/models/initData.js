@@ -18,6 +18,7 @@ const Departments = {
         description: "Liderar el accionar encaminado a preservar la dignidad, el acceso, la participación y la seguridad de las personas, a través de acciones de protección y doctrina del área misional."
     }
 }
+
 async function InsertDepartments() {
     for(let prop in Departments) {
         await createDepartamento({
@@ -30,17 +31,18 @@ async function InsertDepartments() {
 const MemberType = {
     "activo": {
         name: "Activo",
-        description: "description goes here"
+        description: "Miembro que participa activamente en las actividades"
     },
     "pasivo": {
         name: "Pasivo",
-        description: "description goes here"
+        description: "Miembro que participa ocasionalmente en las actividades"
     },
     "suscriptor": {
         name: "Suscriptor",
-        description: "description goes here"
+        description: "Persona que apoya las actividades sin participar en estas"
     },
 }
+
 async function InsertTypes() {
     for(let prop in MemberType) {
         await createTipoVoluntario({
@@ -53,13 +55,13 @@ async function InsertTypes() {
 const Stations = {
     "40": {
         numero: 40,
-        provincia: "Distrito Nacional",
-        municipio: "Santo Domingo Este"
+        provincia: 102,
+        municipio: 102
     },
     "82": {
         numero: 82,
-        provincia: "Distrito Nacional",
-        municipio: "Santo Domingo Este"
+        provincia: 102,
+        municipio: 102
     }
 }
 async function InsertStations() {
@@ -68,13 +70,14 @@ async function InsertStations() {
     }
 }
 
-//InsertDepartments()
-//InsertTypes()
-//InsertStations()
+/* WARNING: Only run commented lines if you're willing to lose all the data in the database */
+/* InsertTypes()
+InsertStations()
+InsertDepartments() */
 
 module.exports = {
-    InsertDepartments,
     InsertTypes,
-    InsertStations
+    InsertStations,
+    InsertDepartments
 }
 

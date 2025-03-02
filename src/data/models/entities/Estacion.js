@@ -8,12 +8,17 @@ const Estacion = sequelize.define("Estacion", {
         allowNull: false,
     },
     provincia: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     municipio: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false
+    },
+    deleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
     },
     id: {
         type: DataTypes.INTEGER,

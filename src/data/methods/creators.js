@@ -1,15 +1,34 @@
-const { Voluntario, Departamento, Estacion, TipoVoluntario } = require("../models/index.js");
+const { resolve } = require("path");
+const { readFileSync } = require("fs");
+const { sequelize } = require("../sqlConnection.js");
+const { Voluntario, Departamento, Estacion, TipoVoluntario, Archivo } = require("../models/index.js");
 
 async function createVolunteer(props) {
+    const t = await sequelize.transaction();
     try {
-        let exists = await Voluntario.count( {where: { identity: props.identity }} );
-        if(exists > 0) return 1;
+        let exists = await Voluntario.count({ where: { identity: props.identity } });
+        if (exists > 0) return 1; // Si el voluntario ya existe, regresa un valor específico
 
-        const volunteer = Voluntario.build(props);
-        let result = await volunteer.save();
-        return result;
-    } catch {
-        return false
+        // Aquí todo debe ejecutarse dentro de la misma transacción
+        let nUser = await Voluntario.create(props, { transaction: t });
+
+        await Archivo.create({
+            content: readFileSync(resolve("./src/assets/default.jpg")),
+            identity: nUser.id,
+            contentType: "image/jpeg",
+            fileName: "Profile Photo",
+            ext: 'jpg'
+        }, { transaction: t });
+
+        // Si todo está bien, haz commit de la transacción
+        await t.commit();
+        return true;
+    } catch (e) {
+        console.log(e);
+        
+        // Si algo falla, haz rollback de la transacción
+        await t.rollback();
+        return false;
     }
 }
 
@@ -45,10 +64,12 @@ async function createTipoVoluntario(props) {
 
 function volunteerPrepare(props) {
     if(!props) return false;
+
+    props["step_5"].identificacion = JSON.parse(props["step_5"].identificacion);
     
     let newVolunteer = {
         checked: false,
-        estacionId: Number(props["step_1"].estacion),
+        EstacionId: Number(props["step_1"].estacion),
 
         //Datos de salud del voluntario
         sangre: props["step_4"].bloodType,
@@ -64,10 +85,10 @@ function volunteerPrepare(props) {
         otherLanguaje: props["step_3"].otherLanguage,
 
         //Datos del area a la que pertenece el voluntario
-        departamentoId: Number(props["step_5"].departamento),
-        tipoVoluntarioId: Number(props["step_5"].tipoVoluntario),
-        hasIdentification: props["step_5"].identificacion == "Si" ? true : false,
-        idetifications: props["step_5"].identificacion == "Si" ? props["step_5"].identificacionDetails : null,
+        DepartamentoId: Number(props["step_5"].departamento),
+        TipoVoluntarioId: Number(props["step_5"].tipoVoluntario),
+        hasIdentification: props["step_5"].identificacion,
+        idetifications: props["step_5"].identificacion == true ? props["step_5"].identificacionDetails : null,
 
         //Datos de contacto
         telefonoFijo: props["step_2"].telefono,
@@ -81,7 +102,7 @@ function volunteerPrepare(props) {
         casa: props["step_2"].casa_no,
 
         //Datos personales
-        identity: props["step_2"].identity,
+        identity: props["step_2"].identity.replace(/[-\s]/g, ""),
         nombre: props["step_2"].nombre,
         apellido: props["step_2"].apellido,
         lugarNacimiento: Number(props["step_2"].nacimientolugar),

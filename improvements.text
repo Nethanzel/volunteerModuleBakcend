@@ -1,7 +1,0 @@
-Los datos del comite se podrian poner en un json, y usando como indice el numero de estacion se podrian obtener los datos de la filial, provincia y lo demas relacionado al comite del voluntario.
-
-"estacion #" : {
-    "Provincia" : "Name",
-    "Municipio" : "Name"
-}
-

@@ -1,28 +1,27 @@
-const {sequelize} = require("../../sqlConnection.js");
 const { DataTypes } = require("sequelize");
+const {sequelize} = require("../../sqlConnection.js");
+
+const bcrypt = require("bcrypt");
 
 const {Estacion} = require('./Estacion.js');
-const {TipoVoluntario} = require('./TipoVoluntario.js');
 const {Departamento} = require('./Departamento');
+const {TipoVoluntario} = require('./TipoVoluntario.js');
 
 const Voluntario = sequelize.define("Voluntario", {
-
+    id: {
+        primaryKey: true,
+        autoIncrement: true,
+        type: DataTypes.INTEGER
+    },
     checked: {
         type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false
     },
-    //Datos del comite
-    estacionId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-
     //Datos personales
     identity: {
         type: DataTypes.STRING(15),
-        allowNull: false,
-        autoIncrement: false,
-        primaryKey: true,
+        allowNull: true,
         unique: true
     },
     nombre: {
@@ -34,7 +33,7 @@ const Voluntario = sequelize.define("Voluntario", {
         allowNull: false
     },
     lugarNacimiento: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     nacimiento: {
@@ -52,7 +51,7 @@ const Voluntario = sequelize.define("Voluntario", {
 
     //Datos de la direccion
     provincia: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     sector: {
@@ -120,15 +119,6 @@ const Voluntario = sequelize.define("Voluntario", {
         allowNull: false
     },
 
-    //Datos del area que pertenece el voluntario
-    departamentoId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    tipoVoluntarioId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
     hasIdentification: {
         type: DataTypes.BOOLEAN,
         allowNull: false
@@ -136,36 +126,52 @@ const Voluntario = sequelize.define("Voluntario", {
     idetifications: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+
+    // Datos de sistema
+    allowAccess: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+    },
+    password: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+        allowNull: true,
+    },
+    permissions: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+        allowNull: true,
+    },
+    deleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+    },
+},
+{
+    hooks: {
+        beforeUpdate: async (record, options) => {
+            if (record.dataValues.password) {
+                const salt = await bcrypt.genSalt(10, "a");
+                record.dataValues.password = await bcrypt.hash(record.dataValues.password, salt);
+            }
+
+            if (record.dataValues.identity) {
+                record.dataValues.identity = record.dataValues.identity.replace(/[-\s]/g, "");
+            }
+        }
     }
 });
 
-Voluntario.hasMany(Estacion, {
-    foreignKey: 'id',
-    onDelete: 'CASCADE'
-});
-Voluntario.hasMany(TipoVoluntario, {
-    foreignKey: 'id',
-    onDelete: 'CASCADE'
-});
-Voluntario.hasMany(Departamento, {
-    foreignKey: 'id',
-    onDelete: 'CASCADE'
-});
+Voluntario.belongsTo(Estacion);
+Voluntario.belongsTo(Departamento);
+Voluntario.belongsTo(TipoVoluntario);
 
-Estacion.belongsToMany(Voluntario, {
-    foreignKey: 'estacionId',
-    through: {model: Voluntario, unique: false}
-});
-
-TipoVoluntario.belongsToMany(Voluntario, {
-    foreignKey: 'tipoVoluntarioId',
-    through: {model: Voluntario, unique: false}
-});
-
-Departamento.belongsToMany(Voluntario, {
-    foreignKey: 'departamentoId',
-    through: {model: Voluntario, unique: false}
-});
+Estacion.hasMany(Voluntario);
+Departamento.hasMany(Voluntario);
+TipoVoluntario.hasMany(Voluntario);
 
 module.exports = {
     Voluntario
