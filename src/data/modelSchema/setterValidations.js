@@ -36,9 +36,9 @@ const userFieldValidation = Joi.object({
         telefonoFijo: Joi.string().optional(),
         idiomas: Joi.string().optional(),
         otherLanguaje: Joi.string().optional(),
-        estacion: Joi.number().optional(),
-        departamento: Joi.number().optional(),
-        tipoVoluntario: Joi.number().optional(),
+        escuela: Joi.number().optional(),
+        grado: Joi.number().optional(),
+        tipomiembro: Joi.number().optional(),
         hasIdentification: Joi.boolean().optional(),
         idetifications: Joi.string().optional(),
     }).required()
@@ -62,7 +62,7 @@ const academicPrepValidation = Joi.object({
     id: Joi.number().required()
 });
 
-const stacionFieldValidation = Joi.object({
+const schoolFieldValidation = Joi.object({
     field: Joi.object().keys({
         numero: Joi.number().optional(),
         provincia: Joi.number().optional(),
@@ -71,9 +71,9 @@ const stacionFieldValidation = Joi.object({
     id: Joi.number().required()
 });
 
-const departmentFieldValidation = Joi.object({
+const levelFieldValidation = Joi.object({
     field: Joi.object().keys({
-        departamento: Joi.string().optional(),
+        grado: Joi.string().optional(),
         descripcion: Joi.string().optional(),
     }),
     id: Joi.number().required()
@@ -108,8 +108,8 @@ module.exports = {
     userFieldValidation,
     contactValidation,
     academicPrepValidation,
-    stacionFieldValidation,
-    departmentFieldValidation,
+    schoolFieldValidation,
+    levelFieldValidation,
     userTypeFieldValidation,
     fileFieldValidation,
     userStatusFieldValidation

@@ -4,50 +4,50 @@ const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js
 const { ValidateQuery, ValidateHeader } = require("../data/methods/validators.js");
 const { queryById, queryByPageNumber } = require("../data/modelSchema/getterValidation.js");
 const { validatePermission, PermissionsList, isAllowedToPermission } = require('../data/models/permissions.js');
-const { getVolunteer, getDepartamento, getEstacion, getTipoVoluntario, getVolunteers } = require("../data/methods/getters.js");
+const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers } = require("../data/methods/getters.js");
 
-router.get("/voluntario", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["QV"]), async (req, res) => {
+router.get("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["QV"]), async (req, res) => {
     let { id } = req.query
     
-    let voluntario = await getVolunteer(id, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
-    if(!voluntario) return res.status(404).send({status: 404, message: "No results where found."});
+    let miembro = await getMember(id, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
+    if(!miembro) return res.status(404).send({status: 404, message: "No results where found."});
 
-    res.status(200).send(voluntario);
+    res.status(200).send(miembro);
 });
 
-router.get("/voluntarios", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryByPageNumber), validatePermission(["QVL"]), async (req, res) => {
+router.get("/miembros", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryByPageNumber), validatePermission(["QVL"]), async (req, res) => {
     let { page } = req.query;
-    let voluntarios = await getVolunteers(page, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
-    if(!voluntarios) return res.status(404).send({status: 404, message: "No results where found."});
+    let miembros = await getMembers(page, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
+    if(!miembros) return res.status(404).send({status: 404, message: "No results where found."});
 
-    res.status(200).send(voluntarios);
+    res.status(200).send(miembros);
 });
 
-router.get("/estacion", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), async (req, res) => {
+router.get("/escuela", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), async (req, res) => {
     let { id } = req.query;
 
-    let estacion = await getEstacion(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
-    if(!estacion) return res.status(404).send({status: 404, message: "No results where found."});
+    let escuela = await getEscuela(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
+    if(!escuela) return res.status(404).send({status: 404, message: "No results where found."});
     
-    res.status(200).send(estacion);
+    res.status(200).send(escuela);
 });
 
-router.get("/tipovoluntario", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), async (req, res) => {
+router.get("/tipo-miembro", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), async (req, res) => {
     let { id } = req.query;
 
-    let tipo = await getTipoVoluntario(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
+    let tipo = await getTipoMiembro(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
     if(!tipo) return res.status(404).send({status: 404, message: "No results where found."});
     
     res.status(200).send(tipo);
 });
 
-router.get("/departamento", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), async (req, res) => {
+router.get("/grado", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), async (req, res) => {
     let { id } = req.query;
 
-    let departamento = await getDepartamento(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
-    if(!departamento) return res.status(404).send({status: 404, message: "No results where found."});
+    let grado = await getGrado(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
+    if(!grado) return res.status(404).send({status: 404, message: "No results where found."});
     
-    res.status(200).send(departamento);
+    res.status(200).send(grado);
 });
 
 router.get("/permisos", ValidateHeader(authorizeSchema), authorizeGuard(), (req, res) => res.status(200).send(PermissionsList));

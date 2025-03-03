@@ -4,7 +4,7 @@ const { validatePermission } = require('../data/models/permissions.js');
 const { queryById } = require('../data/modelSchema/getterValidation.js');
 const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js');
 const { manageEmergencyContacts, manageAcademicPrep } = require('../data/methods/setters.js');
-const { deleteEstacion, deleteDepartment, deleteUserType } = require('../data/methods/eraser.js');
+const { deleteEscuela, deleteLevel, deleteUserType } = require('../data/methods/eraser.js');
 const { ValidateFields, ValidateHeader, ValidateQuery } = require("../data/methods/validators.js");
 const { eraseContactValidation, eraseAcademicValidation } = require("../data/modelSchema/eraseValidations.js");
 
@@ -18,13 +18,13 @@ router.delete("/remove-academic", ValidateHeader(authorizeSchema), authorizeGuar
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 
-router.delete("/department", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DD"]), async (req, res) => {
-    let op = await deleteDepartment(req.query.id, true);
+router.delete("/level", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DD"]), async (req, res) => {
+    let op = await deleteLevel(req.query.id, true);
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 
-router.delete("/estacion", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DE"]), async (req, res) => {
-    let op = await deleteEstacion(req.query.id, true);
+router.delete("/escuela", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DE"]), async (req, res) => {
+    let op = await deleteEscuela(req.query.id, true);
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 

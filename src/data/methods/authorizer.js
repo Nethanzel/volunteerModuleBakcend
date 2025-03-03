@@ -1,4 +1,4 @@
-const { Autorizacion, Voluntario, Archivo } = require("../models");
+const { Autorizacion, Miembro, Archivo } = require("../models");
 
 async function createAuthorization(props) {
     try {
@@ -22,9 +22,9 @@ async function disableOtherAccess(identity) {
 async function accessValidity(access, includeAll = true) {
     let accessRecord = 
     includeAll ? 
-        await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Voluntario, include: [{ model: Archivo, where: { fileName: "Profile Photo" } }] }] })
+        await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro, include: [{ model: Archivo, where: { fileName: "Profile Photo" } }] }] })
     :
-        await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Voluntario }] });
+        await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro }] });
 
     if (!accessRecord) return null;
     if (!Boolean(accessRecord.active)) return null;
@@ -35,7 +35,7 @@ async function accessValidity(access, includeAll = true) {
 }
 
 async function newAccess(params) {
-    const user = await Voluntario.findOne({ where: { identity: params.user }, include: [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }] });
+    const user = await Miembro.findOne({ where: { identity: params.user }, include: [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }] });
 
     if (!user) {
         return {
@@ -123,24 +123,26 @@ async function authorize(req, res) {
         let access = JSON.parse(Buffer.from(authorization, "base64").toString("utf-8"));
         
         let accessData = await accessValidity(access);
-        if (!accessData) return res.status(401).send();
+        if (!accessData) return res.status(401).send({ code: 401, message: "Autorizacion inválida" });
+
+        if (!accessData.Miembro.allowAccess) return res.status(401).send({ code: 401, message: "No tiene acceso a la plataforma" });
 
         let accessJson = accessData.toJSON();
         let imgData = {};
 
-        if (accessJson.Voluntario.Archivos.length > 0) {
-            imgData.mime = accessJson.Voluntario.Archivos[0].contentType;
-            imgData.data = accessJson.Voluntario.Archivos[0].content;
+        if (accessJson.Miembro.Archivos.length > 0) {
+            imgData.mime = accessJson.Miembro.Archivos[0].contentType;
+            imgData.data = accessJson.Miembro.Archivos[0].content;
         }
 
         // if token is ok
         return res.status(200).send({ 
             userImg: imgData,
-            permissions: accessJson.Voluntario.permissions?.split(",") ?? [],
-            firstName: accessJson.Voluntario.nombre,
-            lastName: accessJson.Voluntario.apellido,
-            identity: accessJson.Voluntario.identity,
-            id: accessJson.Voluntario.id
+            permissions: accessJson.Miembro.permissions?.split(",") ?? [],
+            firstName: accessJson.Miembro.nombre,
+            lastName: accessJson.Miembro.apellido,
+            identity: accessJson.Miembro.identity,
+            id: accessJson.Miembro.id
         });
     }
     catch (e) {
@@ -161,16 +163,16 @@ function authorizeGuard(isOpen = false) {
         let accessData = await accessValidity(access, false);
         if (!accessData) {
             if (isOpen) return next();
-            return res.status(401).send();
+            return res.status(401).send({ code: 401, message: "Autorizacion inválida" });
         }
 
         let accessJson = accessData.toJSON();
 
         req.user = {
-            permissions: accessJson.Voluntario.permissions?.split(",") ?? [],
-            identity: accessJson.Voluntario.id,
-            lastName: accessJson.Voluntario.apellido,
-            name: accessJson.Voluntario.nombre,
+            permissions: accessJson.Miembro.permissions?.split(",") ?? [],
+            identity: accessJson.Miembro.id,
+            lastName: accessJson.Miembro.apellido,
+            name: accessJson.Miembro.nombre,
         }
         
         next();

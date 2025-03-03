@@ -1,30 +1,30 @@
 const PermissionsList = [
     {
-        description: "Consultar voluntario",
+        description: "Consultar miembro",
         key: "QV"
     },
     {
-        description: "Visualizar voluntario",
+        description: "Visualizar miembro",
         key: "VV"
     },
     {
-        description: "Consultar todos los voluntarios",
+        description: "Consultar todos los miembros",
         key: "QVL"
     },
     {
-        description: "Crear estacion",
+        description: "Crear escuela",
         key: "CS"
     },
     {
-        description: "Crear departamento",
+        description: "Crear grado",
         key: "CD"
     },
     {
-        description: "Crear tipo voluntario",
+        description: "Crear tipo miembro",
         key: "CVT"
     },
     {
-        description: "Actualizar voluntario",
+        description: "Actualizar miembro",
         key: "UV"
     },
     {
@@ -68,27 +68,27 @@ const PermissionsList = [
         key: "RDF"
     },
     {
-        description: "Borrar estacion",
+        description: "Borrar escuela",
         key: "DE"
     },
     {
-        description: "Borrar departamento",
+        description: "Borrar grado",
         key: "DD"
     },
     {
-        description: "Borrar tipo voluntario",
+        description: "Borrar tipo miembro",
         key: "DVT"
     },
     {
-        description: "Actualizar departamento",
+        description: "Actualizar grado",
         key: "UD"
     },
     {
-        description: "Actualizar tipo voluntario",
+        description: "Actualizar tipo miembro",
         key: "UVT"
     },
     {
-        description: "Actualizar estacion",
+        description: "Actualizar escuela",
         key: "US"
     },
     {

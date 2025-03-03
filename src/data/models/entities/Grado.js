@@ -1,10 +1,14 @@
 const {sequelize} = require("../../sqlConnection.js");
 const { DataTypes } = require("sequelize");
 
-const TipoVoluntario = sequelize.define("TipoVoluntario", {
-    tipo: {
+const Grado = sequelize.define("Grado", {
+    grado: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    color: {
+        type: DataTypes.STRING,
+        allowNull: true
     },
     descripcion: {
         type: DataTypes.TEXT,
@@ -18,10 +22,10 @@ const TipoVoluntario = sequelize.define("TipoVoluntario", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true,
+        primaryKey: true    
     }
 });
 
 module.exports = {
-    TipoVoluntario
+    Grado
 }

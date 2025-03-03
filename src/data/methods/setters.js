@@ -1,8 +1,8 @@
-const { Voluntario, Estacion, Departamento, TipoVoluntario } = require("../models/index.js");
+const { Miembro, Escuela, Grado, TipoMiembro } = require("../models/index.js");
 
-async function setVolunteerField(params) {
+async function setMemberField(params) {
     try {
-        let res = await Voluntario.update(params.field, { where: { id: params.id }});
+        let res = await Miembro.update(params.field, { where: { id: params.id }});
         return {
             result: res > 0,
             message: null,
@@ -24,9 +24,9 @@ async function setVolunteerField(params) {
     }
 }
 
-async function setStacionField(params) {
+async function setSchoolField(params) {
     try {
-        let res = await Estacion.update(params.field, { where: { id: params.id }});
+        let res = await Escuela.update(params.field, { where: { id: params.id }});
         return {
             result: res > 0,
             message: null,
@@ -42,9 +42,9 @@ async function setStacionField(params) {
     }
 }
 
-async function setDepartmentField(params) {
+async function setLevelField(params) {
     try {
-        let res = await Departamento.update(params.field, { where: { id: params.id }});
+        let res = await Grado.update(params.field, { where: { id: params.id }});
         return {
             result: res > 0,
             message: null,
@@ -62,7 +62,7 @@ async function setDepartmentField(params) {
 
 async function setUserTypeField(params) {
     try {
-        let res = await TipoVoluntario.update(params.field, { where: { id: params.id }});
+        let res = await TipoMiembro.update(params.field, { where: { id: params.id }});
         return {
             result: res > 0,
             message: null,
@@ -79,7 +79,7 @@ async function setUserTypeField(params) {
 }
 
 async function managePermissions(params, add) {
-    let user = await Voluntario.findOne({ where: { id: params.id }});
+    let user = await Miembro.findOne({ where: { id: params.id }});
 
     if (add) {
         if (!user.permissions) user.permissions = params.key
@@ -91,13 +91,13 @@ async function managePermissions(params, add) {
         user.permissions = p.join(',');
     }
 
-    let res = await Voluntario.update({ permissions: user.permissions }, { where: { id: params.id }});
+    let res = await Miembro.update({ permissions: user.permissions }, { where: { id: params.id }});
     return res > 0;
 }
 
 async function manageEmergencyContacts(params, add) {
     try {
-        let user = await Voluntario.findOne({ where: { id: params.id }});
+        let user = await Miembro.findOne({ where: { id: params.id }});
 
         if (!user) return { result: false, message: 'Usuario no encontrado', code: 404 }
 
@@ -130,7 +130,7 @@ async function manageEmergencyContacts(params, add) {
             user.contactoEmergencia = contacts;
         }
 
-        let res = await Voluntario.update({ contactoEmergencia: user.contactoEmergencia }, { where: { id: params.id }});
+        let res = await Miembro.update({ contactoEmergencia: user.contactoEmergencia }, { where: { id: params.id }});
         if (res > 0) return { result: true, message: null, code: res > 0 ? 204 : 503 }
 
         return { result: false, message: 'No se pudo guardar el cambio', code: 503 }
@@ -148,7 +148,7 @@ async function manageEmergencyContacts(params, add) {
 
 async function manageAcademicPrep(params, add) {
     try {
-        let user = await Voluntario.findOne({ where: { id: params.id }});
+        let user = await Miembro.findOne({ where: { id: params.id }});
 
         if (!user) return { result: false, message: 'Usuario no encontrado', code: 404 }
 
@@ -164,7 +164,7 @@ async function manageAcademicPrep(params, add) {
             user.estudios = studies;
         }
 
-        let res = await Voluntario.update({ estudios: user.estudios }, { where: { id: params.id }});
+        let res = await Miembro.update({ estudios: user.estudios }, { where: { id: params.id }});
         if (res > 0) return { result: true, message: null, code: res > 0 ? 204 : 503 }
 
         return { result: false, message: 'No se pudo guardar el cambio', code: 503 }
@@ -181,11 +181,11 @@ async function manageAcademicPrep(params, add) {
 }
 
 module.exports = {
-    setVolunteerField,
+    setMemberField,
     managePermissions,
     manageEmergencyContacts,
     manageAcademicPrep,
-    setStacionField,
-    setDepartmentField,
+    setSchoolField,
+    setLevelField,
     setUserTypeField
 }

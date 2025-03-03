@@ -1,10 +1,10 @@
 require("dotenv").config();
-const { InsertDepartments, InsertTypes, InsertStations } = require("../models/initData.js");
+const { InsertLevels, InsertTypes, InsertSchools } = require("../models/initData.js");
 const { dropModels, syncModels } = require("../sqlConnection.js");
 
-/* InsertDepartments();
+/* InsertLevels();
 InsertTypes();
-InsertStations(); */
+InsertSchools(); */
 
 /* dropModels() */
 

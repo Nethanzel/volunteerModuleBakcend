@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const { Voluntario } = require("./Voluntario.js");
+const { Miembro } = require("./Miembro.js");
 const {sequelize} = require("../../sqlConnection.js");
 
 const Archivo = sequelize.define("Archivo", {
@@ -38,14 +38,14 @@ const Archivo = sequelize.define("Archivo", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Voluntario,
+            model: Miembro,
             key: "id"
         }
     }
 });
 
-Voluntario.hasMany(Archivo, { foreignKey: "identity", onDelete: "CASCADE" });
-Archivo.belongsTo(Voluntario, { foreignKey: "identity" });
+Miembro.hasMany(Archivo, { foreignKey: "identity", onDelete: "CASCADE" });
+Archivo.belongsTo(Miembro, { foreignKey: "identity" });
 
 module.exports = {
     Archivo

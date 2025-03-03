@@ -3,11 +3,11 @@ const {sequelize} = require("../../sqlConnection.js");
 
 const bcrypt = require("bcrypt");
 
-const {Estacion} = require('./Estacion.js');
-const {Departamento} = require('./Departamento');
-const {TipoVoluntario} = require('./TipoVoluntario.js');
+const {Escuela} = require('./Escuela.js');
+const {Grado} = require('./Grado.js');
+const {TipoMiembro} = require('./TipoMiembro.js');
 
-const Voluntario = sequelize.define("Voluntario", {
+const Miembro = sequelize.define("Miembro", {
     id: {
         primaryKey: true,
         autoIncrement: true,
@@ -18,6 +18,7 @@ const Voluntario = sequelize.define("Voluntario", {
         defaultValue: false,
         allowNull: false
     },
+    
     //Datos personales
     identity: {
         type: DataTypes.STRING(15),
@@ -40,17 +41,17 @@ const Voluntario = sequelize.define("Voluntario", {
         type: DataTypes.DATE,
         allowNull: false
     },
-    nacionalidad: {
-        type: DataTypes.STRING,
-        allowNull: false
+    peso: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     },
-    estadoCivil: {
-        type: DataTypes.STRING,
-        allowNull: false
+    altura: {
+        type: DataTypes.DECIMAL(3,1),
+        allowNull: true
     },
 
     //Datos de la direccion
-    provincia: {
+    municipio: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
@@ -63,6 +64,10 @@ const Voluntario = sequelize.define("Voluntario", {
         allowNull: true
     },
     casa: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    apartamento: {
         type: DataTypes.STRING,
         allowNull: true
     },
@@ -81,25 +86,18 @@ const Voluntario = sequelize.define("Voluntario", {
         allowNull: false
     },
 
-    //Datos de formacion academica
-    estudios: {
+    tutorInfo: {
         type: DataTypes.JSON,
-        allowNull: false
+        allowNull: true
     },
-    idiomas: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    otherLanguaje: {
+
+    //Datos de formacion academica
+    ocupacion: {
         type: DataTypes.STRING,
         allowNull: true
     },
 
-    //Datos de salud del voluntario
-    sangre: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+    //Datos de salud del miembro
     enfermedad: {
         type: DataTypes.BOOLEAN,
     },
@@ -111,6 +109,18 @@ const Voluntario = sequelize.define("Voluntario", {
         type: DataTypes.BOOLEAN,
     },
     alergiaDetalles: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+
+    assurance: {
+        type: DataTypes.BOOLEAN,
+    },
+    assuranceCompany: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    assuranceCode: {
         type: DataTypes.STRING,
         allowNull: true
     },
@@ -126,6 +136,23 @@ const Voluntario = sequelize.define("Voluntario", {
     idetifications: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+
+    otherMartialArt: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    },
+    otherMartialArtDetails: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    desire: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    interested: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
 
     // Datos de sistema
@@ -165,14 +192,20 @@ const Voluntario = sequelize.define("Voluntario", {
     }
 });
 
-Voluntario.belongsTo(Estacion);
-Voluntario.belongsTo(Departamento);
-Voluntario.belongsTo(TipoVoluntario);
+Miembro.belongsTo(Grado);
+Miembro.belongsTo(TipoMiembro);
 
-Estacion.hasMany(Voluntario);
-Departamento.hasMany(Voluntario);
-TipoVoluntario.hasMany(Voluntario);
+Grado.hasMany(Miembro);
+TipoMiembro.hasMany(Miembro);
+
+// Relación Escuela -> Miembros (Uno a Muchos)
+Miembro.belongsTo(Escuela, { foreignKey: 'escuelaId', as: 'escuela' });
+Escuela.hasMany(Miembro, { foreignKey: 'escuelaId', as: 'miembros' });
+
+// Relación Escuela -> Líder (Uno a Uno, pero el líder es un Miembro)
+Escuela.belongsTo(Miembro, { foreignKey: 'liderId', as: 'lider', allowNull: true });
+
 
 module.exports = {
-    Voluntario
+    Miembro
 }

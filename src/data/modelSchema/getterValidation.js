@@ -9,8 +9,8 @@ const queryByPageNumber = Joi.object({
 });
 
 const queryIdentity = Joi.object({
-    identity: Joi.string().required(),
-    email: Joi.string().required()
+    identity: Joi.string().optional(),
+    email: Joi.string().optional()
 });
 
 module.exports = {

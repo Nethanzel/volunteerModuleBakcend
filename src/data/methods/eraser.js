@@ -1,8 +1,8 @@
-const { Estacion, Departamento, TipoVoluntario, Voluntario } = require("../models");
+const { Escuela, Grado, TipoMiembro, Miembro } = require("../models");
 
-async function deleteEstacion(id, deleted) {
+async function deleteEscuela(id, deleted) {
     try {
-        let res = await Estacion.update({ deleted }, { where: { id }});
+        let res = await Escuela.update({ deleted }, { where: { id }});
         return {
             result: res > 0,
             message: null,
@@ -20,7 +20,7 @@ async function deleteEstacion(id, deleted) {
 
 async function deleteUserType(id, deleted) {
     try {
-        let res = await TipoVoluntario.update({ deleted }, { where: { id }});
+        let res = await TipoMiembro.update({ deleted }, { where: { id }});
         return {
             result: res > 0,
             message: null,
@@ -36,9 +36,9 @@ async function deleteUserType(id, deleted) {
     }
 }
 
-async function deleteDepartment(id, deleted) {
+async function deleteLevel(id, deleted) {
     try {
-        let res = await Departamento.update({ deleted }, { where: { id }});
+        let res = await Grado.update({ deleted }, { where: { id }});
         return {
             result: res > 0,
             message: null,
@@ -56,7 +56,7 @@ async function deleteDepartment(id, deleted) {
 
 async function deleteUser(id, deleted) {
     try {
-        let res = await Voluntario.update({ deleted }, { where: { id }});
+        let res = await Miembro.update({ deleted }, { where: { id }});
         return {
             result: res > 0,
             message: null,
@@ -73,8 +73,8 @@ async function deleteUser(id, deleted) {
 }
 
 module.exports = {
-    deleteEstacion,
+    deleteEscuela,
     deleteUserType,
-    deleteDepartment,
+    deleteLevel,
     deleteUser
 }

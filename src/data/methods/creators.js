@@ -1,23 +1,23 @@
 const { resolve } = require("path");
 const { readFileSync } = require("fs");
 const { sequelize } = require("../sqlConnection.js");
-const { Voluntario, Departamento, Estacion, TipoVoluntario, Archivo } = require("../models/index.js");
+const { Miembro, Grado, Escuela, TipoMiembro, Archivo } = require("../models/index.js");
 
-async function createVolunteer(props) {
+async function createMember(props, image) {
     const t = await sequelize.transaction();
     try {
-        let exists = await Voluntario.count({ where: { identity: props.identity } });
-        if (exists > 0) return 1; // Si el voluntario ya existe, regresa un valor específico
+        let exists = props.identity ? await Miembro.count({ where: { identity: props.identity } }) : 0;
+        if (exists > 0) return 1; // Si el miembro ya existe, regresa un valor específico
 
         // Aquí todo debe ejecutarse dentro de la misma transacción
-        let nUser = await Voluntario.create(props, { transaction: t });
+        let nUser = await Miembro.create(props, { transaction: t });
 
         await Archivo.create({
-            content: readFileSync(resolve("./src/assets/default.jpg")),
-            identity: nUser.id,
-            contentType: "image/jpeg",
+            content: image ? image.file : readFileSync(resolve("./src/assets/default.jpg")),
+            contentType: image ? image.type : "image/jpeg",
+            ext: image ? image.ext : 'jpg',
             fileName: "Profile Photo",
-            ext: 'jpg'
+            identity: nUser.id,
         }, { transaction: t });
 
         // Si todo está bien, haz commit de la transacción
@@ -32,63 +32,69 @@ async function createVolunteer(props) {
     }
 }
 
-async function createEstacion(props) {
+async function createEscuela(props) {
     try {
-        const station = Estacion.build(props);
+        const station = Escuela.build(props);
         let result = await station.save();
         return result;
-    } catch {
+    } catch (e) {
+        console.log(e);
         return false
     }
 }
 
-async function createDepartamento(props) {
+async function createGrado(props) {
     try {
-        const department = Departamento.build(props);
-        let result = await department.save();
+        const level = Grado.build(props);
+        let result = await level.save();
         return result;
-    } catch {
+    } catch (e) {
+        console.log(e);
+        
         return false
     }
 }
 
-async function createTipoVoluntario(props) {
+async function createTipoMiembro(props) {
     try {
-        const tVolunteer = TipoVoluntario.build(props);
-        let result = await tVolunteer.save();
+        const tMember = TipoMiembro.build(props);
+        let result = await tMember.save();
         return result;
-    } catch {
+    } catch (e) {
+        console.log(e);
         return false
     }
 }
 
-function volunteerPrepare(props) {
+function memberPrepare(props) {
     if(!props) return false;
 
-    props["step_5"].identificacion = JSON.parse(props["step_5"].identificacion);
+    props["step_4"].identificacion = JSON.parse(props["step_4"].identificacion);
+    props["step_4"].otherMartialArt = JSON.parse(props["step_4"].otherMartialArt);
     
-    let newVolunteer = {
+    let newMember = {
         checked: false,
-        EstacionId: Number(props["step_1"].estacion),
+        escuelaId: Number(props["step_1"].escuela),
 
-        //Datos de salud del voluntario
-        sangre: props["step_4"].bloodType,
-        enfermedad: props["step_4"].desease.state,
-        enfermedadDetalles: props["step_4"].desease.state ? props["step_4"].desease.contents : "",
-        alergia: props["step_4"].medicine.state,
-        alergiaDetalles: props["step_4"].medicine.state ? props["step_4"].medicine.contents : "",
-        contactoEmergencia: props["step_4"].emergencyContacts,
+        //Datos de salud del miembro
+        assurance: props["step_3"].assurance.state,
+        assuranceCompany: props["step_3"].assurance.state ? (props["step_3"].assuranceCompany ? props["step_3"].assuranceCompany : null) : null,
+        assuranceCode: props["step_3"].assurance.state ? (props["step_3"].assuranceCode ? props["step_3"].assuranceCode : null) : null,
+        enfermedad: props["step_3"].desease.state,
+        enfermedadDetalles: props["step_3"].desease.state ? (props["step_3"].desease.contents ? props["step_3"].desease.contents : null) : null,
+        alergia: props["step_3"].medicine.state,
+        alergiaDetalles: props["step_3"].medicine.state ? (props["step_3"].medicine.contents ? props["step_3"].medicine.contents : null) : null,
+        contactoEmergencia: props["step_3"].emergencyContacts,
 
-        //Datos de formacion academica
-        estudios: props["step_3"].study,
-        idiomas: props["step_3"].languages.toString(),
-        otherLanguaje: props["step_3"].otherLanguage,
-
-        //Datos del area a la que pertenece el voluntario
-        DepartamentoId: Number(props["step_5"].departamento),
-        TipoVoluntarioId: Number(props["step_5"].tipoVoluntario),
-        hasIdentification: props["step_5"].identificacion,
-        idetifications: props["step_5"].identificacion == true ? props["step_5"].identificacionDetails : null,
+        //Datos del area a la que pertenece el miembro
+        GradoId: Number(props["step_4"].grado),
+        TipoMiembroId: Number(props["step_4"].tipoMiembro),
+        hasIdentification: props["step_4"].identificacion,
+        idetifications: props["step_4"].identificacion == true ? props["step_4"].identificacionDetails : null,
+        otherMartialArt: props["step_4"].otherMartialArt,
+        otherMartialArtDetails: props["step_4"].otherMartialArt == true ? props["step_4"].otherMartialArtDetails : null,
+        desire: props["step_4"].desire,
+        interested: props["step_4"].interested,
 
         //Datos de contacto
         telefonoFijo: props["step_2"].telefono,
@@ -96,28 +102,33 @@ function volunteerPrepare(props) {
         correo: props["step_2"].email,
 
         //Datos de la direccion
-        provincia: Number(props["step_2"].provincia),
+        municipio: Number(props["step_2"].municipio),
+        apartamento: props["step_2"].apartamento ? props["step_2"].apartamento : null,
         sector: props["step_2"].sector,
-        calle: props["step_2"].calle,
         casa: props["step_2"].casa_no,
+        calle: props["step_2"].calle,
+
+        tutorInfo: props["step_2"].tutorInfo,
 
         //Datos personales
-        identity: props["step_2"].identity.replace(/[-\s]/g, ""),
+        identity: props["step_2"].identity ? props["step_2"].identity.replace(/[-\s]/g, "") : null,
         nombre: props["step_2"].nombre,
         apellido: props["step_2"].apellido,
         lugarNacimiento: Number(props["step_2"].nacimientolugar),
         nacimiento: props["step_2"].nacimientofecha,
         nacionalidad: props["step_2"].nacionalidad,
-        estadoCivil: props["step_2"].ecivil
+        ocupacion: props["step_2"].ocupacion? props["step_2"].ocupacion : null,
+        peso: Number(props["step_2"].peso),
+        altura: Number(props["step_2"].estatura)
     }
 
-    return newVolunteer;
+    return newMember;
 }
 
 module.exports = {
-    createDepartamento,
-    createEstacion,
-    createTipoVoluntario,
-    createVolunteer,
-    volunteerPrepare
+    createGrado,
+    createEscuela,
+    createTipoMiembro,
+    createMember,
+    memberPrepare
 }

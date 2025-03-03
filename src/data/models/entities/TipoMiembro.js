@@ -1,18 +1,13 @@
 const {sequelize} = require("../../sqlConnection.js");
 const { DataTypes } = require("sequelize");
 
-
-const Estacion = sequelize.define("Estacion", {
-    numero: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    provincia: {
-        type: DataTypes.INTEGER,
+const TipoMiembro = sequelize.define("TipoMiembro", {
+    tipo: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    municipio: {
-        type: DataTypes.INTEGER,
+    descripcion: {
+        type: DataTypes.TEXT,
         allowNull: false
     },
     deleted: {
@@ -28,5 +23,5 @@ const Estacion = sequelize.define("Estacion", {
 });
 
 module.exports = {
-    Estacion
+    TipoMiembro
 }

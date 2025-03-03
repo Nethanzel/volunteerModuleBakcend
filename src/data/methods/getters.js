@@ -1,39 +1,39 @@
-const { Voluntario, Departamento, Estacion, TipoVoluntario, Archivo } = require("../models/index.js");
+const { Miembro, Grado, Escuela, TipoMiembro, Archivo } = require("../models/index.js");
 const { Op } = require("sequelize");
 
 
-async function getVolunteer(id, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
+async function getMember(id, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
     try {
-        let volunteer = await Voluntario.findOne({ 
+        let member = await Miembro.findOne({ 
             where: { 
                 id, 
                 deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
                 checked: { [Op.in]: viewNonCofirmed ? [true, false] : [true] }
             },
             include: [
-                { model: Estacion },
-                { model: Departamento },
-                { model: TipoVoluntario },
+                { model: Escuela },
+                { model: Grado },
+                { model: TipoMiembro },
                 { model: Archivo, where: { fileName: "Profile Photo" }, required: false }
             ]
         });
 
-        if (!volunteer) return null;
-        delete volunteer.password;
-        volunteer.Archivos = [...volunteer.Archivos, ...await getUserFiles(volunteer.id, allowDeletedFiles)];
+        if (!member) return null;
+        delete member.password;
+        member.Archivos = [...member.Archivos, ...await getUserFiles(member.id, allowDeletedFiles)];
 
-        return volunteer.toJSON();
+        return member.toJSON();
     } catch {
         return null;
     }
 }
 
-async function getVolunteers(page, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
+async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
     const limit = 15;
     let result = {};
 
     try {
-        const volunteerList = await Voluntario.findAndCountAll({
+        const memberList = await Miembro.findAndCountAll({
             where: { 
                 deleted: { [Op.in]: allowDeleted ? [true, false] : [false] }, 
                 checked: { [Op.in]: viewNonCofirmed ? [true, false] : [true] }
@@ -42,80 +42,80 @@ async function getVolunteers(page, allowDeleted, allowDeletedFiles = false, view
             order: [['id', 'DESC']],
             offset: 0 + (Number(page) - 1) * limit,
             include: [
-                { model: Estacion },
-                { model: Departamento },
-                { model: TipoVoluntario },
+                { model: Grado },
+                { model: TipoMiembro },
+                { model: Escuela, as: "escuela", required: false },
                 { model: Archivo, where: { fileName: "Profile Photo" }, required: false }
             ]
         });
 
-        result['count'] = volunteerList.count;
+        result['count'] = memberList.count;
         result['limit'] = limit;
         result['rows'] = [];
 
-        await Promise.all(volunteerList.rows.map(async (volunteer) => {
-            let otherFiles = await getUserFiles(volunteer.id, allowDeletedFiles);
-            otherFiles.forEach(f => volunteer.Archivos.push(f));
+        await Promise.all(memberList.rows.map(async (member) => {
+            let otherFiles = await getUserFiles(member.id, allowDeletedFiles);
+            otherFiles.forEach(f => member.Archivos.push(f));
 
-            let data = volunteer.toJSON();
+            let data = member.toJSON();
             delete data.password;
             result.rows.push(data);
         }));
 
         return result;
-    } catch (e) {
-        return false;
-    }
-}
-
-async function getEstaciones(allowDeleted) {
-    try {
-        let station = Estacion.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
-        return station;
-    } catch (e) {
-        return false;
-    }
-}
-
-async function getDepartamentos(allowDeleted) {
-    try {
-        let department = Departamento.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } }});
-        return department;
     } catch {
         return false;
     }
 }
 
-async function getTipoVoluntarios(allowDeleted) {
+async function getEscuelas(allowDeleted) {
     try {
-        const tVolunteer = await TipoVoluntario.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
-        return tVolunteer;
+        let school = Escuela.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
+        return school;
     } catch {
         return false;
     }
 }
 
-async function getEstacion(id, allowDeleted) {
+async function getGrados(allowDeleted) {
     try {
-        const estacion = Estacion.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
-        return estacion;
+        let level = Grado.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } }});
+        return level;
     } catch {
         return false;
     }
 }
 
-async function getDepartamento(id, allowDeleted) {
+async function getTipoMiembros(allowDeleted) {
     try {
-        const departamento = Departamento.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
-        return departamento;
+        const tMember = await TipoMiembro.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
+        return tMember;
     } catch {
         return false;
     }
 }
 
-async function getTipoVoluntario(id, allowDeleted) {
+async function getEscuela(id, allowDeleted) {
     try {
-        const tipo = TipoVoluntario.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
+        const escuela = Escuela.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
+        return escuela;
+    } catch {
+        return false;
+    }
+}
+
+async function getGrado(id, allowDeleted) {
+    try {
+        const grado = Grado.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
+        return grado;
+    } catch {
+        return false;
+    }
+}
+
+async function getTipoMiembro(id, allowDeleted) {
+    try {
+        const tipo = TipoMiembro.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
         return tipo;
     } catch {
         return false;
@@ -128,19 +128,19 @@ async function getUserFiles(id, allowDeleted) {
 }
 
 async function getIdentificationExistence(value) {
-    let count = await Voluntario.count({ where: { identity: value } });
+    let count = await Miembro.count({ where: { identity: value } });
     return count > 0;
 }
 
 module.exports = {
-    getVolunteer,
-    getVolunteers,
-    getEstacion,
-    getDepartamento,
-    getTipoVoluntario,
-    getEstaciones,
-    getDepartamentos,
-    getTipoVoluntarios,
+    getMember,
+    getMembers,
+    getEscuela,
+    getGrado,
+    getTipoMiembro,
+    getEscuelas,
+    getGrados,
+    getTipoMiembros,
     getUserFiles,
     getIdentificationExistence
 }

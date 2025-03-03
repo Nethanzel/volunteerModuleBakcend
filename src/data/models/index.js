@@ -1,15 +1,15 @@
-const {Estacion} = require('./entities/Estacion.js');
-const {Voluntario} = require('./entities/Voluntario.js');
-const {Departamento} = require('./entities//Departamento.js');
-const {TipoVoluntario} = require('./entities/TipoVoluntario.js');
+const {Escuela} = require('./entities/Escuela.js');
+const {Grado} = require('./entities/Grado.js');
+const {TipoMiembro} = require('./entities/TipoMiembro.js');
 const { Autorizacion } = require('./entities/Autorizacion.js');
 const { Archivo } = require('./entities/Archivo.js');
+const { Miembro } = require('./entities/Miembro.js');
 
 module.exports = {
-    Estacion,
-    Departamento,
-    TipoVoluntario,
+    Escuela,
+    Grado,
+    TipoMiembro,
     Autorizacion,
-    Voluntario,
+    Miembro,
     Archivo
 }
