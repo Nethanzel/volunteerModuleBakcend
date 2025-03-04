@@ -7,7 +7,7 @@ const history = require('connect-history-api-fallback');
 
 const app = express();
 
-const { initConnection } = require("./src/data/sqlConnection.js");
+const { initConnection, syncModels } = require("./src/data/sqlConnection.js");
 const authorizeRoutes = require("./src/api/authorize.js");
 const publicPoutes = require("./src/api/publicRoutes.js");
 const creatorRoutes = require("./src/api/creators.js");
@@ -19,8 +19,8 @@ const fileRoutes = require("./src/api/files.js");
 ConfigureApp();
 
 async function ConfigureApp() {
-
     await initConnection();
+    if (!process.env.STOP_MODEL_SYNC) await syncModels();
 
     app.use(history());
     app.use(cors({origin: "*"}));
