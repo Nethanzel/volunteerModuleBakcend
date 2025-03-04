@@ -33,7 +33,7 @@ async function setSchoolField(params) {
             code: res > 0 ? 204 : 503
         };
     }
-    catch (e) {
+    catch {
         return {
             result: false,
             message: "No se pudo guardar el cambio",
@@ -51,7 +51,7 @@ async function setLevelField(params) {
             code: res > 0 ? 204 : 503
         };
     }
-    catch (e) {
+    catch {
         return {
             result: false,
             message: "No se pudo guardar el cambio",
@@ -69,7 +69,7 @@ async function setUserTypeField(params) {
             code: res > 0 ? 204 : 503
         };
     }
-    catch (e) {
+    catch {
         return {
             result: false,
             message: "No se pudo guardar el cambio",
@@ -79,20 +79,25 @@ async function setUserTypeField(params) {
 }
 
 async function managePermissions(params, add) {
-    let user = await Miembro.findOne({ where: { id: params.id }});
+    try {
+        let user = await Miembro.findOne({ where: { id: params.id }});
 
-    if (add) {
-        if (!user.permissions) user.permissions = params.key
-        else user.permissions += `,${params.key}`;
+        if (add) {
+            if (!user.permissions) user.permissions = params.key
+            else user.permissions += `,${params.key}`;
+        }
+        else {
+            let p = user.permissions?.split(',') ?? [];
+            p.splice(p.indexOf(params.key), 1);
+            user.permissions = p.join(',');
+        }
+    
+        let res = await Miembro.update({ permissions: user.permissions }, { where: { id: params.id }});
+        return res > 0;
     }
-    else {
-        let p = user.permissions?.split(',') ?? [];
-        p.splice(p.indexOf(params.key), 1);
-        user.permissions = p.join(',');
+    catch {
+        return false;
     }
-
-    let res = await Miembro.update({ permissions: user.permissions }, { where: { id: params.id }});
-    return res > 0;
 }
 
 async function manageEmergencyContacts(params, add) {

@@ -1,7 +1,6 @@
 const { Miembro, Grado, Escuela, TipoMiembro, Archivo } = require("../models/index.js");
 const { Op } = require("sequelize");
 
-
 async function getMember(id, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
     try {
         let member = await Miembro.findOne({ 
@@ -64,7 +63,7 @@ async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNon
 
         return result;
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -82,9 +81,8 @@ async function getMembersNames() {
 
         return memberList;
     }
-    catch (e) {
-        console.log(e);
-        return false;
+    catch {
+        return null;
     }
     
 }
@@ -101,7 +99,7 @@ async function getEscuelas(allowDeleted) {
         });
         return school;
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -110,7 +108,7 @@ async function getGrados(allowDeleted) {
         let level = Grado.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } }});
         return level;
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -119,7 +117,7 @@ async function getTipoMiembros(allowDeleted) {
         const tMember = await TipoMiembro.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
         return tMember;
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -128,7 +126,7 @@ async function getEscuela(id, allowDeleted) {
         const escuela = Escuela.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
         return escuela;
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -137,7 +135,7 @@ async function getGrado(id, allowDeleted) {
         const grado = Grado.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
         return grado;
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -146,18 +144,28 @@ async function getTipoMiembro(id, allowDeleted) {
         const tipo = TipoMiembro.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
         return tipo;
     } catch {
-        return false;
+        return null;
     }
 }
 
 async function getUserFiles(id, allowDeleted) {
-    let result = await Archivo.findAll({ where: { identity: id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] }, fileName: { [Op.ne]: 'Profile Photo' } }, attributes: { exclude: ['content'] } });
-    return result;
+    try {
+        let result = await Archivo.findAll({ where: { identity: id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] }, fileName: { [Op.ne]: 'Profile Photo' } }, attributes: { exclude: ['content'] } });
+        return result;
+    }
+    catch {
+        return null;
+    }
 }
 
 async function getIdentificationExistence(value) {
-    let count = await Miembro.count({ where: { identity: value } });
-    return count > 0;
+    try {
+        let count = await Miembro.count({ where: { identity: value } });
+        return count > 0;
+    }
+    catch {
+        return null;
+    }
 }
 
 module.exports = {

@@ -32,7 +32,7 @@ async function createMember(props, image) {
             result: true,
             userCode: nUser.referenceCode
         };
-    } catch (e) {
+    } catch {
         // Si algo falla, haz rollback de la transacción
         await t.rollback();
         return {
@@ -75,7 +75,7 @@ async function createTipoMiembro(props) {
 }
 
 function memberPrepare(props) {
-    if(!props) return false;
+    if(!props) return null;
 
     props["step_4"].identificacion = JSON.parse(props["step_4"].identificacion);
     props["step_4"].otherMartialArt = JSON.parse(props["step_4"].otherMartialArt);

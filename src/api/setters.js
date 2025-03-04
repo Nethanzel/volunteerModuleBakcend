@@ -70,7 +70,7 @@ router.patch("/allow-access", ValidateHeader(authorizeSchema), authorizeGuard(),
 router.patch("/add-permission", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(permissionOpValidation), validatePermission(["GP"]), async (req, res) => {
     let op = await managePermissions(req.fields, true);
     if (op) return res.status(204).send();
-    return res.status(204).send({ code: 503, message: "No se pudo guardar el cambio" })
+    return res.status(503).send({ code: 503, message: "No se pudo guardar el cambio" })
 });
 
 router.patch("/remove-permission", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(permissionOpValidation), validatePermission(["RP"]), async (req, res) => {

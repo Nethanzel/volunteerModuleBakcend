@@ -11,106 +11,126 @@ async function createAuthorization(props) {
 }
 
 async function disableOtherAccess(identity) {
-    let activeAccess = await Autorizacion.findAll({ where: { identity, active: true } });
-    activeAccess.forEach(access => {
-        access.active = false;
-        access.save();
-    });
+    try {
+        let activeAccess = await Autorizacion.findAll({ where: { identity, active: true } });
+        activeAccess.forEach(access => {
+            access.active = false;
+            access.save();
+        });
+    }
+    catch {
+        return null;
+    }
 }
 
 async function accessValidity(access, includeAll = true) {
-    let accessRecord = 
-    includeAll ? 
-        await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro, include: [{ model: Archivo, where: { fileName: "Profile Photo" } }] }] })
-    :
-        await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro }] });
+    try {
+        let accessRecord = 
+        includeAll ? 
+            await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro, include: [{ model: Archivo, where: { fileName: "Profile Photo" } }] }] })
+        :
+            await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro }] });
 
-    if (!accessRecord) return null;
-    if (!Boolean(accessRecord.active)) return null;
-    if (new Date() > accessRecord.expiresAt) return null;
-    if (accessRecord.identity != access.identity) return null;
+        if (!accessRecord) return null;
+        if (!Boolean(accessRecord.active)) return null;
+        if (new Date() > accessRecord.expiresAt) return null;
+        if (accessRecord.identity != access.identity) return null;
 
-    return accessRecord;
+        return accessRecord;
+    }
+    catch {
+        return null;
+    }
 }
 
 async function newAccess(params) {
-    const user = await Miembro.findOne({ where: { identity: params.user }, include: [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }] });
+    try {    
+        const user = await Miembro.findOne({ where: { identity: params.user }, include: [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }] });
 
-    if (!user) {
+        if (!user) {
+            return {
+                message: "Usuario no encontrado",
+                result: false,
+                token: null,
+                code: 404
+            }
+        }
+
+        if (!user.allowAccess) {
+            return {
+                message: "No tiene permiso para acceder",
+                result: false,
+                token: null,
+                code: 403
+            }
+        }
+
+        if (user.password != params.password) {
+            return {
+                message: "Contraseña incorrecta",
+                result: false,
+                token: null,
+                code: 403,
+            }
+        }
+
+        await disableOtherAccess(user.id);
+
+        let newAuthorization = {
+            active: true,
+            identity: user.id,
+            releasedOn: new Date(),
+            expiresAt: new Date().setDate(new Date().getDate() +1)
+        }
+
+        let authResult = await createAuthorization(newAuthorization);
+
+        if (authResult != null) {
+            let token = {
+                aid: authResult.id,
+                identity: newAuthorization.identity,
+                expiresAt: newAuthorization.expiresAt
+            }
+
+            let imgData = {};
+
+            if (user.Archivos.length > 0) {
+                imgData.mime = user.Archivos[0].contentType;
+                imgData.data = user.Archivos[0].content;
+            }
+
+            return {
+                message: null,
+                result: true,
+                data: {
+                    key: Buffer.from(JSON.stringify(token)).toString("base64"),
+                    user: {
+                        userImg: imgData,
+                        permissions: user.permissions?.split(",") ?? [],
+                        firstName: user.nombre,
+                        lastName: user.apellido,
+                        identity: user.identity,
+                        id: user.id
+                    }
+                },
+                code: 200,
+            }
+        }
+
         return {
-            message: "Usuario no encontrado",
+            message: "Ocurrió un error, intente mas tarde.",
             result: false,
             token: null,
-            code: 404
+            code: 503,
         }
     }
-
-    if (!user.allowAccess) {
+    catch {
         return {
-            message: "No tiene permiso para acceder",
+            message: "Ocurrió un error, intente mas tarde.",
             result: false,
             token: null,
-            code: 403
-        }
-    }
-
-    if (user.password != params.password) {
-        return {
-            message: "Contraseña incorrecta",
-            result: false,
-            token: null,
-            code: 403,
-        }
-    }
-
-    await disableOtherAccess(user.id);
-
-    let newAuthorization = {
-        active: true,
-        identity: user.id,
-        releasedOn: new Date(),
-        expiresAt: new Date().setDate(new Date().getDate() +1)
-    }
-
-    let authResult = await createAuthorization(newAuthorization);
-
-    if (authResult != null) {
-        let token = {
-            aid: authResult.id,
-            identity: newAuthorization.identity,
-            expiresAt: newAuthorization.expiresAt
-        }
-
-        let imgData = {};
-
-        if (user.Archivos.length > 0) {
-            imgData.mime = user.Archivos[0].contentType;
-            imgData.data = user.Archivos[0].content;
-        }
-
-        return {
-            message: null,
-            result: true,
-            data: {
-                key: Buffer.from(JSON.stringify(token)).toString("base64"),
-                user: {
-                    userImg: imgData,
-                    permissions: user.permissions?.split(",") ?? [],
-                    firstName: user.nombre,
-                    lastName: user.apellido,
-                    identity: user.identity,
-                    id: user.id
-                }
-            },
-            code: 200,
-        }
-    }
-
-    return {
-        message: "Ocurrió un error, intente mas tarde.",
-        result: false,
-        token: null,
-        code: 503,
+            code: 503,
+        } 
     }
 }
 
@@ -144,8 +164,8 @@ async function authorize(req, res) {
             id: accessJson.Miembro.id
         });
     }
-    catch (e) {
-        return res.status(401).send({ code: 401, message: "Autorizacion inválida" });
+    catch {
+        return res.status(503).send({ code: 503, message: "Ocurrió un error" });
     }
 }
 

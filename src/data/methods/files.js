@@ -24,7 +24,7 @@ async function deleteFile(params, deleted) {
         let res = await Archivo.update({ deleted }, { where: { identity: params.uid, id: params.id } });
         return { result: res > 0, message: null, code: res > 0 ? 204 : 503 };
     }
-    catch (e) {
+    catch {
         return { code:503, message:"Ocurrió un error", result:false }
     }
 }
@@ -34,27 +34,32 @@ async function updateFile(params) {
         let res = await Archivo.update(params.field, { where: { id: params.id } });
         return { result: res > 0, message: null, code: res > 0 ? 204 : 503 };
     }
-    catch (e) {
+    catch {
         return { code:503, message:"Ocurrió un error", result:false }
     }
 }
 
 async function getFileById(id, includeContent, allowDeleted) {
-    const file = await Archivo.findOne({ 
-        where: { 
-            id, 
-            deleted: { 
-                [Op.in]: allowDeleted ? [true, false] : [false] 
+    try {
+        const file = await Archivo.findOne({ 
+            where: { 
+                id, 
+                deleted: { 
+                    [Op.in]: allowDeleted ? [true, false] : [false] 
+                }
+            },
+            attributes: {
+                exclude: !includeContent ? ['content'] : []
             }
-        },
-        attributes: {
-            exclude: !includeContent ? ['content'] : []
-        }
-    });
-
-    if (!file) return null;
-
-    return file.toJSON();
+        });
+    
+        if (!file) return null;
+    
+        return file.toJSON();
+    }
+    catch {
+        return null;
+    }
 }
 
 module.exports = {

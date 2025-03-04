@@ -10,7 +10,7 @@ const sequelize = new Sequelize({
     password: process.env.DB_PASSWORD
 });
 
-async function testConnection() {
+async function initConnection() {
     try {
         await sequelize.authenticate();
         console.log('Connection has been established successfully.');
@@ -22,7 +22,7 @@ async function testConnection() {
 }
 
 async function syncModels() {
-    if(await testConnection()) {
+    if(await initConnection()) {
         try {
             await sequelize.sync({ alter: true, force: false });
             console.log("Syncronization was done.");
@@ -33,7 +33,7 @@ async function syncModels() {
 }
 
 async function dropModels() {
-    if(await testConnection()) {
+    if(await initConnection()) {
         try {
             await sequelize.dropAllSchemas();
             console.log("Syncronization was done.");
@@ -44,7 +44,7 @@ async function dropModels() {
 }
 
 module.exports = {
-    testConnection,
+    initConnection,
     syncModels,
     dropModels,
     sequelize

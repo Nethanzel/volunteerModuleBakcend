@@ -184,16 +184,21 @@ const Miembro = sequelize.define("Miembro", {
 });
 
 Miembro.beforeCreate(async (record, options) => {
-    const prefix = "BSP-";
-    
-    // Obtener el último ID para predecir el próximo
-    const lastUser = await Miembro.findOne({ order: [['id', 'DESC']], attributes: ['id'] });
+    try {
+        const prefix = "BSP-";
+        
+        // Obtener el último ID para predecir el próximo
+        const lastUser = await Miembro.findOne({ order: [['id', 'DESC']], attributes: ['id'] });
 
-    const nextId = lastUser ? lastUser.id + 1 : 1;
-    record.referenceCode = `${prefix}${String(nextId).padStart(7, '0')}`;
+        const nextId = lastUser ? lastUser.id + 1 : 1;
+        record.referenceCode = `${prefix}${String(nextId).padStart(7, '0')}`;
 
-    if (record.identity) {
-        record.identity = record.identity.replace(/[-\s]/g, "");
+        if (record.identity) {
+            record.identity = record.identity.replace(/[-\s]/g, "");
+        }
+    }
+    catch (e) {
+        throw e;
     }
 });
 

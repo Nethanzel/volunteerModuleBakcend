@@ -9,7 +9,7 @@ async function deleteEscuela(id, deleted) {
             code: res > 0 ? 204 : 503
         };
     }
-    catch (e) {
+    catch {
         return {
             result: false,
             message: "No se pudo guardar el cambio",
@@ -27,7 +27,7 @@ async function deleteUserType(id, deleted) {
             code: res > 0 ? 204 : 503
         };
     }
-    catch (e) {
+    catch {
         return {
             result: false,
             message: "No se pudo guardar el cambio",
@@ -45,7 +45,7 @@ async function deleteLevel(id, deleted) {
             code: res > 0 ? 204 : 503
         };
     }
-    catch (e) {
+    catch {
         return {
             result: false,
             message: "No se pudo guardar el cambio",
@@ -63,7 +63,7 @@ async function deleteUser(id, deleted) {
             code: res > 0 ? 204 : 503
         };
     }
-    catch (e) {
+    catch {
         return {
             result: false,
             message: "No se pudo guardar el cambio",
