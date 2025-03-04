@@ -15,7 +15,6 @@ const permissionOpValidation = Joi.object({
 const userFieldValidation = Joi.object({
     id: Joi.number().required(),
     field: Joi.object().keys({
-        sangre: Joi.string().optional(),
         alergia: Joi.boolean().optional(),
         alergiaDetalles: Joi.string().optional(),
         enfermedad: Joi.boolean().optional(),
@@ -24,13 +23,13 @@ const userFieldValidation = Joi.object({
         nombre: Joi.string().optional(),
         apellido: Joi.string().optional(),
         nacionalidad: Joi.string().optional(),
-        estadoCivil: Joi.string().optional(),
         lugarNacimiento: Joi.number().optional(),
         nacimiento: Joi.date().iso().optional(),
-        provincia: Joi.number().optional(),
+        municipio: Joi.number().optional(),
         sector: Joi.string().optional(),
         calle: Joi.string().optional(),
         casa: Joi.number().optional(),
+        apartamento: Joi.string().optional(),
         correo: Joi.string().optional(),
         celular: Joi.string().optional(),
         telefonoFijo: Joi.string().optional(),
@@ -41,6 +40,18 @@ const userFieldValidation = Joi.object({
         tipomiembro: Joi.number().optional(),
         hasIdentification: Joi.boolean().optional(),
         idetifications: Joi.string().optional(),
+        assurance: Joi.boolean().optional(),
+        assuranceCompany: Joi.string().optional(),
+        assuranceCode: Joi.string().optional(),
+        ocupacion: Joi.string().optional(),
+        peso: Joi.number().optional(),
+        altura: Joi.number().optional(),
+        escuelaId: Joi.number().optional(),
+        GradoId: Joi.number().optional(),
+        TipoMiembroId: Joi.number().optional(),
+        interested: Joi.number().optional(),
+        otherMartialArt: Joi.boolean().optional(),
+        desire: Joi.string().optional(),
     }).required()
 });
 
