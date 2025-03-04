@@ -64,9 +64,12 @@ const academicPrepValidation = Joi.object({
 
 const schoolFieldValidation = Joi.object({
     field: Joi.object().keys({
-        numero: Joi.number().optional(),
+        nombre: Joi.string().optional(),
         provincia: Joi.number().optional(),
-        municipio: Joi.number().optional()
+        municipio: Joi.number().optional(),
+        lat: Joi.number().optional(),
+        lng: Joi.number().optional(),
+        liderId: Joi.number().optional()
     }),
     id: Joi.number().required()
 });
@@ -74,7 +77,9 @@ const schoolFieldValidation = Joi.object({
 const levelFieldValidation = Joi.object({
     field: Joi.object().keys({
         grado: Joi.string().optional(),
-        descripcion: Joi.string().optional(),
+        descripcion: Joi.string().optional().allow("", null),
+        color: Joi.string().optional(),
+        prefix: Joi.string().optional().allow("", null)
     }),
     id: Joi.number().required()
 });

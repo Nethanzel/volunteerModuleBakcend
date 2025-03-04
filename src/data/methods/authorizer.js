@@ -5,8 +5,7 @@ async function createAuthorization(props) {
         const authorization = Autorizacion.build(props);
         let result = await authorization.save();
         return result;
-    } catch (e) {
-        console.log(e);
+    } catch {
         return null
     }
 }

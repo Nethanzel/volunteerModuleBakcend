@@ -7,7 +7,12 @@ async function createMember(props, image) {
     const t = await sequelize.transaction();
     try {
         let exists = props.identity ? await Miembro.count({ where: { identity: props.identity } }) : 0;
-        if (exists > 0) return 1; // Si el miembro ya existe, regresa un valor específico
+        if (exists > 0) return {
+            result: false,
+            userCode: null,
+            code: 208,
+            message: `Ya se han registrado usando la cédula ${props.identity}`
+        };
 
         // Aquí todo debe ejecutarse dentro de la misma transacción
         let nUser = await Miembro.create(props, { transaction: t });
@@ -22,13 +27,20 @@ async function createMember(props, image) {
 
         // Si todo está bien, haz commit de la transacción
         await t.commit();
-        return true;
+
+        return {
+            result: true,
+            userCode: nUser.referenceCode
+        };
     } catch (e) {
-        console.log(e);
-        
         // Si algo falla, haz rollback de la transacción
         await t.rollback();
-        return false;
+        return {
+            result: false,
+            userCode: null,
+            code: 503,
+            message: "Ocurrió un error"
+        };
     }
 }
 
@@ -37,8 +49,7 @@ async function createEscuela(props) {
         const station = Escuela.build(props);
         let result = await station.save();
         return result;
-    } catch (e) {
-        console.log(e);
+    } catch {
         return false
     }
 }
@@ -48,9 +59,7 @@ async function createGrado(props) {
         const level = Grado.build(props);
         let result = await level.save();
         return result;
-    } catch (e) {
-        console.log(e);
-        
+    } catch {
         return false
     }
 }
@@ -60,8 +69,7 @@ async function createTipoMiembro(props) {
         const tMember = TipoMiembro.build(props);
         let result = await tMember.save();
         return result;
-    } catch (e) {
-        console.log(e);
+    } catch {
         return false
     }
 }

@@ -11,6 +11,10 @@ const trainingTypes = [
         id: 3,
         name: "Defensa personal"
     },
+    {
+        id: 4,
+        name: "Taichí"
+    },
 ]
 
 module.exports = {

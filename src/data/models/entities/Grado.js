@@ -10,9 +10,13 @@ const Grado = sequelize.define("Grado", {
         type: DataTypes.STRING,
         allowNull: true
     },
+    prefix: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     descripcion: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: true
     },
     deleted: {
         type: DataTypes.BOOLEAN,

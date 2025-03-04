@@ -68,9 +68,37 @@ async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNon
     }
 }
 
+async function getMembersNames() {
+    try {
+        const memberList = await Miembro.findAndCountAll({
+            where: {
+                deleted: false,
+                checked: false,
+                GradoId: { [Op.ne]: null, [Op.gt]: 0 }
+            },
+            attributes: ['nombre','apellido','id'],
+            raw: true
+        });
+
+        return memberList;
+    }
+    catch (e) {
+        console.log(e);
+        return false;
+    }
+    
+}
+
 async function getEscuelas(allowDeleted) {
     try {
-        let school = Escuela.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
+        let school = Escuela.findAll({ 
+            where: { 
+                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } 
+            },
+            include: [
+                { model: Miembro, attributes: ['nombre','apellido'], required: false, as: "lider", include: [{ model:Grado, attributes: ['grado','color','prefix'] }] }
+            ]
+        });
         return school;
     } catch {
         return false;
@@ -142,5 +170,6 @@ module.exports = {
     getGrados,
     getTipoMiembros,
     getUserFiles,
-    getIdentificationExistence
+    getIdentificationExistence,
+    getMembersNames
 }

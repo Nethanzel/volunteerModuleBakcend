@@ -16,9 +16,9 @@ router.post("/miembro", ValidateFields(miembroMV), async (req, res) => {
         image.ext = req.fields.step_5?.image.ext;
     }
     let result = await createMember(memberPrepare(req.fields), image).catch(() => false);
-    if(result === 1) return res.status(208).send({status: 208, message: "That record has already been done."})
-    if(!result) return res.status(503).send({status: 503, message: "Unable to create the new resource."})
-    res.status(201).send();
+    if (!result.result) return res.status(result.code).send({status: result.code, message: result.message});
+
+    res.status(201).send({ userCode: result.userCode });
 });
 
 router.post("/escuela", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(escuelaMV), validatePermission(["CS"]), async (req, res) => {

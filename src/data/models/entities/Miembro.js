@@ -176,19 +176,35 @@ const Miembro = sequelize.define("Miembro", {
         defaultValue: false,
         allowNull: false,
     },
-},
-{
-    hooks: {
-        beforeUpdate: async (record, options) => {
-            if (record.dataValues.password) {
-                const salt = await bcrypt.genSalt(10, "a");
-                record.dataValues.password = await bcrypt.hash(record.dataValues.password, salt);
-            }
+    referenceCode: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
+    }
+});
 
-            if (record.dataValues.identity) {
-                record.dataValues.identity = record.dataValues.identity.replace(/[-\s]/g, "");
-            }
-        }
+Miembro.beforeCreate(async (record, options) => {
+    const prefix = "BSP-";
+    
+    // Obtener el último ID para predecir el próximo
+    const lastUser = await Miembro.findOne({ order: [['id', 'DESC']], attributes: ['id'] });
+
+    const nextId = lastUser ? lastUser.id + 1 : 1;
+    record.referenceCode = `${prefix}${String(nextId).padStart(7, '0')}`;
+
+    if (record.identity) {
+        record.identity = record.identity.replace(/[-\s]/g, "");
+    }
+});
+
+Miembro.beforeUpdate(async (record, options) => {
+    if (record.password) {
+        const salt = await bcrypt.genSalt(10, "a");
+        record.password = await bcrypt.hash(record.password, salt);
+    }
+
+    if (record.identity) {
+        record.identity = record.identity.replace(/[-\s]/g, "");
     }
 });
 

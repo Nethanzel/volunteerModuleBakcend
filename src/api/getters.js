@@ -4,7 +4,7 @@ const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js
 const { ValidateQuery, ValidateHeader } = require("../data/methods/validators.js");
 const { queryById, queryByPageNumber } = require("../data/modelSchema/getterValidation.js");
 const { validatePermission, PermissionsList, isAllowedToPermission } = require('../data/models/permissions.js');
-const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers } = require("../data/methods/getters.js");
+const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers, getMembersNames } = require("../data/methods/getters.js");
 
 router.get("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["QV"]), async (req, res) => {
     let { id } = req.query
@@ -20,6 +20,12 @@ router.get("/miembros", ValidateHeader(authorizeSchema), authorizeGuard(), Valid
     let miembros = await getMembers(page, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
     if(!miembros) return res.status(404).send({status: 404, message: "No results where found."});
 
+    res.status(200).send(miembros);
+});
+
+router.get("/miembros/nombres", ValidateHeader(authorizeSchema), authorizeGuard(), validatePermission(["QVL"]), async (req, res) => {
+    let miembros = await getMembersNames().catch(() => false);
+    if(!miembros) return res.status(404).send({status: 404, message: "No results where found."});
     res.status(200).send(miembros);
 });
 

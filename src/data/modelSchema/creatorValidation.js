@@ -7,13 +7,18 @@ const tipomiembroMV = Joi.object({
 
 const gradoMV = Joi.object({
     grado: Joi.string().required(),
-    descripcion: Joi.string().required()
+    descripcion: Joi.string().optional().allow("", null),
+    color: Joi.string().required(),
+    prefix: Joi.string().required()
 });
 
 const escuelaMV = Joi.object({
-    numero: Joi.number().required(),
+    nombre: Joi.string().required(),
     provincia: Joi.number().required(),
     municipio: Joi.number().required(),
+    lat: Joi.number().required().allow("", null),
+    lng: Joi.number().required().allow("", null),
+    liderId: Joi.number().required().allow("", null)
 });
 
 const miembroMV = Joi.object({
