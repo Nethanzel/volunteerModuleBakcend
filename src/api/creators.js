@@ -39,4 +39,6 @@ router.post("/user-type", ValidateHeader(authorizeSchema), authorizeGuard(), Val
     res.status(201).send();
 });
 
+
+
 module.exports = router;

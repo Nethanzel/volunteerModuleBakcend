@@ -79,11 +79,11 @@ const Miembro = sequelize.define("Miembro", {
     },
     celular: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     correo: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
 
     tutorInfo: {

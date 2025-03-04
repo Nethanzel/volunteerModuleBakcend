@@ -32,7 +32,9 @@ async function createMember(props, image) {
             result: true,
             userCode: nUser.referenceCode
         };
-    } catch {
+    } catch (e) {
+        console.log(e);
+        
         // Si algo falla, haz rollback de la transacción
         await t.rollback();
         return {
