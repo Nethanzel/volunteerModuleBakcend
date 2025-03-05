@@ -16,9 +16,9 @@ const userFieldValidation = Joi.object({
     id: Joi.number().required(),
     field: Joi.object().keys({
         alergia: Joi.boolean().optional(),
-        alergiaDetalles: Joi.string().optional(),
+        alergiaDetalles: Joi.string().optional().allow("", null),
         enfermedad: Joi.boolean().optional(),
-        enfermedadDetalles: Joi.string().optional(),
+        enfermedadDetalles: Joi.string().optional().allow("", null),
         identity: Joi.string().max(13).optional(),
         nombre: Joi.string().optional(),
         apellido: Joi.string().optional(),
@@ -39,7 +39,7 @@ const userFieldValidation = Joi.object({
         grado: Joi.number().optional(),
         tipomiembro: Joi.number().optional(),
         hasIdentification: Joi.boolean().optional(),
-        idetifications: Joi.string().optional(),
+        idetifications: Joi.string().optional().allow("", null),
         assurance: Joi.boolean().optional(),
         assuranceCompany: Joi.string().optional(),
         assuranceCode: Joi.string().optional(),
@@ -52,6 +52,7 @@ const userFieldValidation = Joi.object({
         interested: Joi.number().optional(),
         otherMartialArt: Joi.boolean().optional(),
         desire: Joi.string().optional(),
+        otherMartialArtDetails: Joi.string().optional().allow("", null),
     }).required()
 });
 
