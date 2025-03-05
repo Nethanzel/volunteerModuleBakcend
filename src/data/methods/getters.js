@@ -71,8 +71,8 @@ async function getMembersNames() {
     try {
         const memberList = await Miembro.findAndCountAll({
             where: {
+                checked: true,
                 deleted: false,
-                checked: false,
                 GradoId: { [Op.ne]: null, [Op.gt]: 0 }
             },
             attributes: ['nombre','apellido','id'],
