@@ -1,34 +1,38 @@
-const { Miembro, Grado, Escuela, TipoMiembro, Archivo } = require("../models/index.js");
+const { Miembro, Grado, Escuela, TipoMiembro, Archivo, Highlight, Schedule, Practica, Asistencia } = require("../models/index.js");
+const { sequelize } = require("../sqlConnection.js");
 const { Op } = require("sequelize");
+const limit = 15;
 
-async function getMember(id, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
+async function getMember(id, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false, code = null) {   
     try {
         let member = await Miembro.findOne({ 
-            where: { 
-                id, 
+            where: {
+                ...(code ? { referenceCode:code } : { id }),
                 deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
-                checked: { [Op.in]: viewNonCofirmed ? [true, false] : [true] }
+                checked: { [Op.in]: viewNonCofirmed ? [true, false] : [true] },
             },
             include: [
-                { model: Escuela },
+                { model: Escuela, as: 'escuela' },
                 { model: Grado },
                 { model: TipoMiembro },
                 { model: Archivo, where: { fileName: "Profile Photo" }, required: false }
-            ]
+            ],
+            ...(code ? { attributes:['nombre','apellido','nacimiento','enfermedadDetalles','alergiaDetalles','contactoEmergencia','alergia','enfermedad'] } : {}),
         });
 
         if (!member) return null;
+        if (!code) member.Archivos = [...member.Archivos, ...await getUserFiles(member.id, allowDeletedFiles)];
         delete member.password;
-        member.Archivos = [...member.Archivos, ...await getUserFiles(member.id, allowDeletedFiles)];
 
         return member.toJSON();
-    } catch {
+    } catch(e) {
+        console.log(e);
+        
         return null;
     }
 }
 
 async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
-    const limit = 15;
     let result = {};
 
     try {
@@ -67,15 +71,18 @@ async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNon
     }
 }
 
-async function getMembersNames() {
+async function getMembersNames(escuela = null, name = null) {
     try {
-        const memberList = await Miembro.findAndCountAll({
+        const memberList = await Miembro.findAll({
             where: {
                 checked: true,
                 deleted: false,
-                GradoId: { [Op.ne]: null, [Op.gt]: 0 }
+                GradoId: { [Op.ne]: null, [Op.gt]: 0 },
+                ...(escuela ? { escuelaId:escuela } : {}),
+                ...(name ? { [Op.and]: [ sequelize.where(sequelize.fn("LOWER", sequelize.col("nombre")), { [Op.like]: `%${name}%` }) ] } : {})
+                
             },
-            attributes: ['nombre','apellido','id'],
+            attributes: ['nombre','apellido','id','TipoMiembroId'],
             raw: true
         });
 
@@ -84,38 +91,69 @@ async function getMembersNames() {
     catch {
         return null;
     }
-    
 }
 
-async function getEscuelas(allowDeleted) {
+async function getEscuelas(allowDeleted, page, shorten = false, includeSchedule = false) {
     try {
-        let school = Escuela.findAll({ 
+        let result = {};
+
+        let school = await Escuela.findAndCountAll({ 
+            where: {
+                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] }
+            },
+            ...(shorten ? { attributes:['nombre','liderId','id','provincia','municipio'] } : {}),
+            ...(shorten ? { include:[] } : { include: [{ model: Miembro, attributes: ['nombre','apellido'], required: false, as: "lider", include: [{ model:Grado, attributes: ['grado','color','prefix'] }] }]}),
+            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : {}),
+            ...(includeSchedule ? { include: [{ model:Schedule, as: 'schedule', include: [{ model:Miembro, as:'profesor', attributes:['nombre','apellido','id'] }] }] } : {})
+        });
+
+        result['count'] = school.count;
+        result['rows'] = school.rows;
+        result['limit'] = limit;
+
+        return result;
+    } catch {
+        return null;
+    }
+}
+
+async function getGrados(allowDeleted, page) {
+    try {
+        let result = {};
+
+        let level = await Grado.findAndCountAll({ 
             where: { 
                 deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } 
             },
-            include: [
-                { model: Miembro, attributes: ['nombre','apellido'], required: false, as: "lider", include: [{ model:Grado, attributes: ['grado','color','prefix'] }] }
-            ]
+            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : {})
         });
-        return school;
+
+        result['count'] = level.count;
+        result['rows'] = level.rows;
+        result['limit'] = limit;
+
+        return result;
     } catch {
         return null;
     }
 }
 
-async function getGrados(allowDeleted) {
+async function getTipoMiembros(allowDeleted, page) {
     try {
-        let level = Grado.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } }});
-        return level;
-    } catch {
-        return null;
-    }
-}
+        let result = {};
 
-async function getTipoMiembros(allowDeleted) {
-    try {
-        const tMember = await TipoMiembro.findAll({ where: { deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
-        return tMember;
+        const tMember = await TipoMiembro.findAndCountAll({ 
+            where: { 
+                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } 
+            },
+            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : {})
+        });
+
+        result['count'] = tMember.count;
+        result['rows'] = tMember.rows;
+        result['limit'] = limit;
+
+        return result;
     } catch {
         return null;
     }
@@ -126,6 +164,98 @@ async function getEscuela(id, allowDeleted) {
         const escuela = Escuela.findOne({ where: { id, deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } } });
         return escuela;
     } catch {
+        return null;
+    }
+}
+
+async function getHighlights(allowDeleted, allowFullQuery = false, page) {
+    try {
+        let result = {};
+
+        let highlight = await Highlight.findAndCountAll({ 
+            where: { 
+                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] } 
+            },
+            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : {}),
+            ...(allowFullQuery ? {} : { attributes: ['title','comment','image'] })
+        });
+
+        result['count'] = highlight.count;
+        result['rows'] = highlight.rows;
+        result['limit'] = limit;
+
+        return result;
+    } catch {
+        return null;
+    }
+}
+
+async function getSchoolSchedule(id, allowDeleted, page, shorten) {
+    try {
+        let result = {};
+
+        let schedule = await Schedule.findAndCountAll({ 
+            where: {
+                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
+                escuelaId: id
+            },
+            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : {}),
+            ...(shorten ? {attributes:['endHour','startHour','dayOfWeek','profesorId','id']} : {})
+        });
+
+        result['count'] = schedule.count;
+        result['rows'] = schedule.rows;
+        result['limit'] = limit;
+
+        return result;
+    } catch {
+        return null;
+    }
+}
+
+async function getSchoolPractices(id, allowDeleted, page) {
+    try {
+        let result = {};
+
+        let practicas = await Practica.findAndCountAll({
+            where: {
+                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
+                escuelaId: id
+            },
+            distinct: true,
+            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : {}),
+            include: [{
+                model:Asistencia,
+                where: {
+                    deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
+                },
+                as:'asistencia',
+                required: false,
+                include:[{
+                    model:Miembro,
+                    attributes:['nombre','apellido','id','TipoMiembroId'],
+                    as:'miembro',
+                    required: false,
+                    where: {
+                        deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
+                    }
+                }]
+            },
+            {
+                model:Schedule,
+                as: 'schedule',
+                required: false
+            }]
+        });
+
+        result['count'] = practicas.count;
+        result['rows'] = practicas.rows;
+        result['limit'] = limit;
+
+        return result;
+    } catch (e) {
+        console.log(e);
+        
         return null;
     }
 }
@@ -179,5 +309,8 @@ module.exports = {
     getTipoMiembros,
     getUserFiles,
     getIdentificationExistence,
-    getMembersNames
+    getMembersNames,
+    getHighlights,
+    getSchoolSchedule,
+    getSchoolPractices
 }

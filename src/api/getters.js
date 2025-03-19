@@ -2,9 +2,9 @@ const router = require('express').Router();
 const { authorizeGuard } = require('../data/methods/authorizer.js');
 const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js');
 const { ValidateQuery, ValidateHeader } = require("../data/methods/validators.js");
-const { queryById, queryByPageNumber } = require("../data/modelSchema/getterValidation.js");
+const { queryById, queryByPageNumber, queryByIdAndPage } = require("../data/modelSchema/getterValidation.js");
 const { validatePermission, PermissionsList, isAllowedToPermission } = require('../data/models/permissions.js');
-const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers, getMembersNames } = require("../data/methods/getters.js");
+const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers, getMembersNames, getHighlights, getSchoolSchedule, getSchoolPractices } = require("../data/methods/getters.js");
 
 router.get("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["QV"]), async (req, res) => {
     let { id } = req.query
@@ -24,7 +24,8 @@ router.get("/miembros", ValidateHeader(authorizeSchema), authorizeGuard(), Valid
 });
 
 router.get("/miembros/nombres", ValidateHeader(authorizeSchema), authorizeGuard(), validatePermission(["QVL"]), async (req, res) => {
-    let miembros = await getMembersNames().catch(() => false);
+    let { id, name } = req.query;
+    let miembros = await getMembersNames(id, name).catch(() => false);
     if(!miembros) return res.status(404).send({status: 404, message: "No results where found."});
     res.status(200).send(miembros);
 });
@@ -57,5 +58,26 @@ router.get("/grado", ValidateHeader(authorizeSchema), authorizeGuard(), Validate
 });
 
 router.get("/permisos", ValidateHeader(authorizeSchema), authorizeGuard(), (req, res) => res.status(200).send(PermissionsList));
+
+router.get("/highlights", authorizeGuard(), validatePermission(["QH"]), async (req, res) => {
+    let { page } = req.query;
+    let result = await getHighlights(isAllowedToPermission(["QDI"], req.user?.permissions), true, page).catch(() => false);
+    if(!result) return res.status(503).send();
+    res.status(200).send(result);
+});
+
+router.get("/schedule", authorizeGuard(), validatePermission(["QPS"]), ValidateQuery(queryByIdAndPage), async (req, res) => {
+    let { page, id, shorten } = req.query;
+    let result = await getSchoolSchedule(id, isAllowedToPermission(["QDI"], req.user?.permissions), page, shorten).catch(() => false);
+    if(!result) return res.status(503).send();
+    res.status(200).send(result);
+});
+
+router.get("/practice", authorizeGuard(), validatePermission(["QPR"]), ValidateQuery(queryByIdAndPage), async (req, res) => {
+    let { page, id } = req.query;
+    let result = await getSchoolPractices(id, isAllowedToPermission(["QDI"], req.user?.permissions), page).catch(() => false);
+    if(!result) return res.status(503).send();
+    res.status(200).send(result);
+});
 
 module.exports = router;

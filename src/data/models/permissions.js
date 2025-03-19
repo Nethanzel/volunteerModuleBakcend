@@ -12,18 +12,6 @@ const PermissionsList = [
         key: "QVL"
     },
     {
-        description: "Crear escuela",
-        key: "CS"
-    },
-    {
-        description: "Crear grado",
-        key: "CD"
-    },
-    {
-        description: "Crear tipo miembro",
-        key: "CVT"
-    },
-    {
         description: "Actualizar miembro",
         key: "UV"
     },
@@ -60,36 +48,68 @@ const PermissionsList = [
         key: "QDI"
     },
     {
-        description: "Restaurar elementos",
-        key: "RDE"
-    },
-    {
         description: "Restaurar archivos",
         key: "RDF"
     },
+    /* {
+        description: "Consultar grados",
+        key: "QD" NO SE REQUIERE PORQUE ES UNA CONSULTA ABIERTA
+    }, */
     {
-        description: "Borrar escuela",
-        key: "DE"
+        description: "Crear grado",
+        key: "CD"
     },
     {
         description: "Borrar grado",
         key: "DD"
     },
     {
-        description: "Borrar tipo miembro",
-        key: "DVT"
-    },
-    {
         description: "Actualizar grado",
         key: "UD"
+    },
+    {
+        description: "Restaurar grado",
+        key: "RD"
+    },
+    /* {
+        description: "Consultar tipo miembro",
+        key: "QVT" NO SE REQUIERE PORQUE ES UNA CONSULTA ABIERTA
+    }, */
+    {
+        description: "Crear tipo miembro",
+        key: "CVT"
+    },
+    {
+        description: "Borrar tipo miembro",
+        key: "DVT"
     },
     {
         description: "Actualizar tipo miembro",
         key: "UVT"
     },
     {
+        description: "Restaurar tipo miembro",
+        key: "RVT"
+    },
+/*     {
+        description: "Consultar escuelas",
+        key: "QS" NO SE REQUIERE PORQUE ES UNA CONSULTA ABIERTA
+    }, */
+    {
+        description: "Crear escuela",
+        key: "CS"
+    },
+    {
         description: "Actualizar escuela",
         key: "US"
+    },
+    {
+        description: "Borrar escuela",
+        key: "DE"
+    },
+    {
+        description: "Restaurar escuela",
+        key: "RE"
     },
     {
         description: "Consultar archivos",
@@ -130,6 +150,66 @@ const PermissionsList = [
     {
         description: "Borrar usuarios",
         key: "DU"
+    },
+    {
+        description: "Crear highlight",
+        key: "CH"
+    },
+    {
+        description: "Borrar highlight",
+        key: "DH"
+    },
+    {
+        description: "Actualizar highlight",
+        key: "UH"
+    },
+    {
+        description: "Restaurar highlight",
+        key: "RDH"
+    },
+    {
+        description: "Consultar highlights",
+        key: "QH"
+    },
+    {
+        description: "Crear horario de práctica",
+        key: "CPS"
+    },
+    {
+        description: "Borrar horario de práctica",
+        key: "DPS"
+    },
+    {
+        description: "Actualizar horario de práctica",
+        key: "UPS"
+    },
+    {
+        description: "Restaurar horario de práctica",
+        key: "RPS"
+    },
+    {
+        description: "Consultar horario de práctica",
+        key: "QPS"
+    },
+    {
+        description: "Crear práctica",
+        key: "CPR"
+    },
+    {
+        description: "Consultar prácticas",
+        key: "QPR"
+    },
+    {
+        description: "Restaurar prácticas",
+        key: "RPR"
+    },
+    {
+        description: "Borrar prácticas",
+        key: "DPR"
+    },
+    {
+        description: "Actualizar prácticas",
+        key: "UPR"
     }
 ]
 

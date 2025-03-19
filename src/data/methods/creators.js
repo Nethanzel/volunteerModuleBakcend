@@ -1,17 +1,17 @@
 const { resolve } = require("path");
 const { readFileSync } = require("fs");
 const { sequelize } = require("../sqlConnection.js");
-const { Miembro, Grado, Escuela, TipoMiembro, Archivo } = require("../models/index.js");
+const { Miembro, Grado, Escuela, TipoMiembro, Archivo, Highlight, Schedule, Practica, Asistencia } = require("../models/index.js");
 
 async function createMember(props, image) {
     const t = await sequelize.transaction();
     try {
         let exists = props.identity ? await Miembro.count({ where: { identity: props.identity } }) : 0;
         if (exists > 0) return {
-            result: false,
+            message: `Ya se han registrado usando la cédula ${props.identity}`,
             userCode: null,
+            result: false,
             code: 208,
-            message: `Ya se han registrado usando la cédula ${props.identity}`
         };
 
         // Aquí todo debe ejecutarse dentro de la misma transacción
@@ -30,7 +30,8 @@ async function createMember(props, image) {
 
         return {
             result: true,
-            userCode: nUser.referenceCode
+            userCode: nUser.referenceCode,
+            uid: nUser.id
         };
     } catch {
         // Si algo falla, haz rollback de la transacción
@@ -50,7 +51,7 @@ async function createEscuela(props) {
         let result = await station.save();
         return result;
     } catch {
-        return false
+        return null
     }
 }
 
@@ -60,7 +61,7 @@ async function createGrado(props) {
         let result = await level.save();
         return result;
     } catch {
-        return false
+        return null
     }
 }
 
@@ -70,7 +71,50 @@ async function createTipoMiembro(props) {
         let result = await tMember.save();
         return result;
     } catch {
-        return false
+        return null
+    }
+}
+
+async function createHighlight(props) {
+    try {
+        const highlight = Highlight.build(props);
+        let result = await highlight.save();
+        return result;
+    } catch {
+        return null
+    }
+}
+
+async function createSchedule(props) {
+    try {
+        const schedule = Schedule.build(props);
+        let result = await schedule.save();
+        return result;
+    } catch {
+        return null
+    }
+}
+
+async function createPractica(props) {
+    try {
+        const practica = Practica.build(props);
+        let result = await practica.save();
+
+        let atendants = [];
+
+        for (let userId of props.atendance) {
+            let atendanceProps = {
+                miembroId: userId,
+                practicaId: result.id
+            }
+            atendants.push(atendanceProps);
+        }
+        
+        await Asistencia.bulkCreate(atendants);
+        
+        return result;
+    } catch {
+        return null
     }
 }
 
@@ -82,12 +126,12 @@ function memberPrepare(props) {
     
     let newMember = {
         checked: false,
-        escuelaId: Number(props["step_1"].escuela),
+        escuelaId: props["step_1"] ? Number(props["step_1"].escuela) : null,
 
         //Datos de salud del miembro
         assurance: props["step_3"].assurance.state,
-        assuranceCompany: props["step_3"].assurance.state ? (props["step_3"].assuranceCompany ? props["step_3"].assuranceCompany : null) : null,
-        assuranceCode: props["step_3"].assurance.state ? (props["step_3"].assuranceCode ? props["step_3"].assuranceCode : null) : null,
+        assuranceCode: props["step_3"].assurance.state ? (props["step_3"].assurance.code ? props["step_3"].assurance.code : null) : null,
+        assuranceCompany: props["step_3"].assurance.state ? (props["step_3"].assurance.company ? props["step_3"].assurance.company : null) : null,
         enfermedad: props["step_3"].desease.state,
         enfermedadDetalles: props["step_3"].desease.state ? (props["step_3"].desease.contents ? props["step_3"].desease.contents : null) : null,
         alergia: props["step_3"].medicine.state,
@@ -97,12 +141,12 @@ function memberPrepare(props) {
         //Datos del area a la que pertenece el miembro
         GradoId: Number(props["step_4"].grado),
         TipoMiembroId: Number(props["step_4"].tipoMiembro),
-        hasIdentification: props["step_4"].identificacion,
+        hasIdentification: props["step_4"].identificacion == null ? false : props["step_4"].identificacion,
         idetifications: props["step_4"].identificacion == true ? props["step_4"].identificacionDetails : null,
-        otherMartialArt: props["step_4"].otherMartialArt,
         otherMartialArtDetails: props["step_4"].otherMartialArt == true ? props["step_4"].otherMartialArtDetails : null,
-        desire: props["step_4"].desire,
+        otherMartialArt: props["step_4"].otherMartialArt == null ? false : props["step_4"].otherMartialArt,
         interested: props["step_4"].interested,
+        desire: props["step_4"].desire,
 
         //Datos de contacto
         telefonoFijo: props["step_2"].telefono,
@@ -138,5 +182,8 @@ module.exports = {
     createEscuela,
     createTipoMiembro,
     createMember,
-    memberPrepare
+    memberPrepare,
+    createHighlight,
+    createSchedule,
+    createPractica
 }
