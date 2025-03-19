@@ -18,6 +18,10 @@ const Grado = sequelize.define("Grado", {
         type: DataTypes.TEXT,
         allowNull: true
     },
+    category: {
+        type: DataTypes.TINYINT,
+        allowNull: true,
+    },
     deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

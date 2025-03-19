@@ -119,6 +119,37 @@ const userStatusFieldValidation = Joi.object({
     id: Joi.number().required()
 });
 
+const validateHighlighSetter = Joi.object().keys({
+    field: Joi.object().keys({
+        title: Joi.string().optional(),
+        comment: Joi.string().optional(),
+        image: Joi.string().optional(),
+    }),
+    id: Joi.number().required()
+});
+
+const validateScheduleSetter = Joi.object().keys({
+    field: Joi.object().keys({
+        dayOfWeek: Joi.number().optional(),
+        endHour: Joi.string().optional(),
+        startHour: Joi.string().optional(),
+        profesorId: Joi.number().optional(),
+    }),
+    id: Joi.number().required()
+});
+
+const validatePracticeSetter = Joi.object().keys({
+    field: Joi.object().keys({
+        dayOfWeek: Joi.number().optional(),
+        endHour: Joi.string().optional(),
+        startHour: Joi.string().optional(),
+        profesorId: Joi.number().optional(),
+        scheduleId: Joi.number().optional().allow(null),
+        fecha: Joi.date().iso().optional(),
+    }),
+    id: Joi.number().required()
+});
+
 module.exports = {
     allowAccesValidation,
     permissionOpValidation,
@@ -129,5 +160,8 @@ module.exports = {
     levelFieldValidation,
     userTypeFieldValidation,
     fileFieldValidation,
-    userStatusFieldValidation
+    userStatusFieldValidation,
+    validateHighlighSetter,
+    validateScheduleSetter,
+    validatePracticeSetter
 }

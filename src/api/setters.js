@@ -1,14 +1,16 @@
 const router = require('express').Router();
 const { authorizeGuard } = require('../data/methods/authorizer.js');
 const { queryById } = require('../data/modelSchema/getterValidation.js');
+const { validateAtendant } = require('../data/modelSchema/creatorValidation.js');
 const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js');
 const { validatePermission, isAllowedToPermission } = require('../data/models/permissions.js');
-const { deleteLevel, deleteEscuela, deleteUserType } = require('../data/methods/eraser.js');
+const { deleteLevel, deleteEscuela, deleteUserType, deleteHighlight, deleteSchedule, deletePractice, deleteAtendance } = require('../data/methods/eraser.js');
 const { ValidateHeader, ValidateFields, ValidateQuery } = require('../data/methods/validators.js');
-const { setMemberField, managePermissions, manageEmergencyContacts, manageAcademicPrep, setSchoolField, 
-    setLevelField, setUserTypeField } = require("../data/methods/setters.js");
+const { setMemberField, managePermissions, manageEmergencyContacts, manageAcademicPrep, setSchoolField, setLevelField, setUserTypeField, 
+    setHighlightField, setScheduleField, setPracticaField, appendAtendance} = require("../data/methods/setters.js");
 const { allowAccesValidation, permissionOpValidation, userFieldValidation, contactValidation, academicPrepValidation, 
-    schoolFieldValidation, levelFieldValidation, userTypeFieldValidation, userStatusFieldValidation} = require('../data/modelSchema/setterValidations.js');
+    schoolFieldValidation, levelFieldValidation, userTypeFieldValidation, userStatusFieldValidation, validateHighlighSetter, validateScheduleSetter, 
+    validatePracticeSetter} = require('../data/modelSchema/setterValidations.js');
 
 router.patch("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(userFieldValidation), validatePermission(["UV"]), async (req, res) => {
     let op = await setMemberField(req.fields);
@@ -89,18 +91,61 @@ router.patch("/add-academic", ValidateHeader(authorizeSchema), authorizeGuard(),
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 
-router.patch("/restore/level", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RDE"]), async (req, res) => {
+router.patch("/restore/level", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RD"]), async (req, res) => {
     let op = await deleteLevel(req.query.id, false);
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 
-router.patch("/restore/escuela", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RDE"]), async (req, res) => {
+router.patch("/restore/escuela", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RE"]), async (req, res) => {
     let op = await deleteEscuela(req.query.id, false);
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 
-router.patch("/restore/user-type", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RDE"]), async (req, res) => {
+router.patch("/restore/user-type", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RVT"]), async (req, res) => {
     let op = await deleteUserType(req.query.id, false);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/highlight", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(validateHighlighSetter), validatePermission(["UH"]), async (req, res) => {
+    let op = await setHighlightField(req.fields);
+    if (op.result) return res.status(204).send();
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/restore/highlight", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RDH"]), async (req, res) => {
+    let op = await deleteHighlight(req.query.id, false);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/schedule", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(validateScheduleSetter), validatePermission(["UPS"]), async (req, res) => {
+    let op = await setScheduleField(req.fields);
+    if (op.result) return res.status(204).send();
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/restore/schedule", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RPS"]), async (req, res) => {
+    let op = await deleteSchedule(req.query.id, false);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/practice", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(validatePracticeSetter), validatePermission(["UPR"]), async (req, res) => {
+    let op = await setPracticaField(req.fields);
+    if (op.result) return res.status(204).send();
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/restore/practice", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["RPR"]), async (req, res) => {
+    let op = await deletePractice(req.query.id, false);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/restore/atendance", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["UPR"]), async (req, res) => {
+    let op = await deleteAtendance(req.query.id, false);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.patch("/append/atendance", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateFields(validateAtendant), validatePermission(["UPR"]), async (req, res) => {
+    let op = await appendAtendance(req.fields);
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 

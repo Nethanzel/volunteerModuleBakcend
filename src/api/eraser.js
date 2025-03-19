@@ -4,7 +4,7 @@ const { validatePermission } = require('../data/models/permissions.js');
 const { queryById } = require('../data/modelSchema/getterValidation.js');
 const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js');
 const { manageEmergencyContacts, manageAcademicPrep } = require('../data/methods/setters.js');
-const { deleteEscuela, deleteLevel, deleteUserType } = require('../data/methods/eraser.js');
+const { deleteEscuela, deleteLevel, deleteUserType, deleteHighlight, deleteSchedule, deletePractice, deleteAtendance } = require('../data/methods/eraser.js');
 const { ValidateFields, ValidateHeader, ValidateQuery } = require("../data/methods/validators.js");
 const { eraseContactValidation, eraseAcademicValidation } = require("../data/modelSchema/eraseValidations.js");
 
@@ -30,6 +30,26 @@ router.delete("/escuela", ValidateHeader(authorizeSchema), authorizeGuard(), Val
 
 router.delete("/user-type", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DVT"]), async (req, res) => {
     let op = await deleteUserType(req.query.id, true);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.delete("/highlight", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DH"]), async (req, res) => {
+    let op = await deleteHighlight(req.query.id, true);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.delete("/schedule", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DPS"]), async (req, res) => {
+    let op = await deleteSchedule(req.query.id, true);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.delete("/practice", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DPR"]), async (req, res) => {
+    let op = await deletePractice(req.query.id, true);
+    return res.status(op.code).send({ code: op.code, message: op.message });
+});
+
+router.delete("/atendance", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["DPR"]), async (req, res) => {
+    let op = await deleteAtendance(req.query.id, true);
     return res.status(op.code).send({ code: op.code, message: op.message });
 });
 

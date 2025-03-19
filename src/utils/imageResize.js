@@ -34,9 +34,9 @@ async function GetImageSize(imagePath, newSize) {
     })
 }
 
-async function prepareImage(buffer) {
+async function prepareImage(buffer, newSize) {
     const imgBuffer = Buffer.from(buffer, Array.isArray(buffer) ? undefined : "base64");
-    const imageSize = await GetImageSize(imgBuffer, 250);
+    const imageSize = await GetImageSize(imgBuffer, newSize);
     return await ChangeimageSize(imgBuffer, imageSize);
 }
 

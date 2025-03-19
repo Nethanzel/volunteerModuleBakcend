@@ -103,11 +103,6 @@ url("./fonts/icofont.woff") format("woff");
   content: "\efd1";
 }
 
-.icofont-spinner-alt-6:before
-{
-  content: "\eff9";
-}
-
 .icofont-key:before
 {
   content: "\ef59";
@@ -141,6 +136,16 @@ url("./fonts/icofont.woff") format("woff");
 .icofont-plus-circle:before
 {
   content: "\efc0";
+}
+
+.icofont-duotone.icofont-plus-circle:before
+{
+  content: "\13b8b";
+}
+
+.icofont-duotone.icofont-plus-circle:after
+{
+  content: "\13b8a";
 }
 
 .icofont-close:before
@@ -221,6 +226,71 @@ url("./fonts/icofont.woff") format("woff");
 .icofont-baby:before
 {
   content: "\eba1";
+}
+
+.icofont-wall-clock:before
+{
+  content: "\f022";
+}
+
+.icofont-eye-alt:before
+{
+  content: "\ef21";
+}
+
+.icofont-users-social:before
+{
+  content: "\ed0c";
+}
+
+.icofont-runner-alt-1:before
+{
+  content: "\edc5";
+}
+
+.icofont-duotone.icofont-calendar:before
+{
+  content: "\13adb";
+}
+
+.icofont-duotone.icofont-calendar:after
+{
+  content: "\13ada";
+}
+
+.icofont-list:before
+{
+  content: "\ef72";
+}
+
+.icofont-university:before
+{
+  content: "\eaf3";
+}
+
+.icofont-people:before
+{
+  content: "\ecf9";
+}
+
+.icofont-search-user:before
+{
+  content: "\ed1a";
+}
+
+.icofont-tasks:before
+{
+  content: "\f007";
+}
+
+.icofont-tasks-alt:before
+{
+  content: "\f006";
+}
+
+.icofont-spinner:before
+{
+  content: "\effa";
 }
 
 [class^="icofont-"].icofont-duotone,

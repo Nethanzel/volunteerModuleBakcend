@@ -1,4 +1,4 @@
-const { Miembro, Escuela, Grado, TipoMiembro } = require("../models/index.js");
+const { Miembro, Escuela, Grado, TipoMiembro, Highlight, Schedule, Practica, Asistencia } = require("../models/index.js");
 
 async function setMemberField(params) {
     try {
@@ -180,6 +180,83 @@ async function manageAcademicPrep(params, add) {
     }
 }
 
+async function setHighlightField(params) {
+    try {
+        let res = await Highlight.update(params.field, { where: { id: params.id }});
+        return {
+            result: res > 0,
+            message: null,
+            code: res > 0 ? 204 : 503
+        };
+    }
+    catch (e) {
+        return {
+            result: false,
+            message: "No se pudo guardar el cambio",
+            code: 503
+        }
+    }
+}
+
+async function setScheduleField(params) {
+    try {
+        let res = await Schedule.update(params.field, { where: { id: params.id }});
+        return {
+            result: res > 0,
+            message: null,
+            code: res > 0 ? 204 : 503
+        };
+    }
+    catch (e) {
+        console.log(e);
+        return {
+            result: false,
+            message: "No se pudo guardar el cambio",
+            code: 503
+        }
+    }
+}
+
+async function setPracticaField(params) {
+    try {
+        let res = await Practica.update(params.field, { where: { id: params.id }});
+        return {
+            result: res > 0,
+            message: null,
+            code: res > 0 ? 204 : 503
+        };
+    }
+    catch (e) {
+        console.log(e);
+        return {
+            result: false,
+            message: "No se pudo guardar el cambio",
+            code: 503
+        }
+    }
+}
+
+async function appendAtendance(params) {
+    try {
+        let exists = await Asistencia.count({ where:params });
+        if (exists > 0) throw new Error('Ya existe este registro.');
+        
+        const schedule = Asistencia.build(params);
+        let result = await schedule.save();
+        return {
+            result: result != null || result != undefined,
+            code: (result != null || result != undefined) ? 204 : 503,
+            message: null
+        };
+    } catch (e) {
+        return {
+            result: false,
+            message: "No se pudo guardar el cambio",
+            code: 503
+        }
+    }
+}
+
 module.exports = {
     setMemberField,
     managePermissions,
@@ -187,5 +264,9 @@ module.exports = {
     manageAcademicPrep,
     setSchoolField,
     setLevelField,
-    setUserTypeField
+    setUserTypeField,
+    setHighlightField,
+    setScheduleField,
+    setPracticaField,
+    appendAtendance
 }

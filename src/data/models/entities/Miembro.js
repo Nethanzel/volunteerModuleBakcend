@@ -152,7 +152,7 @@ const Miembro = sequelize.define("Miembro", {
     },
     interested: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
 
     // Datos de sistema
@@ -220,7 +220,7 @@ Grado.hasMany(Miembro);
 TipoMiembro.hasMany(Miembro);
 
 // Relación Escuela -> Miembros (Uno a Muchos)
-Miembro.belongsTo(Escuela, { foreignKey: 'escuelaId', as: 'escuela' });
+Miembro.belongsTo(Escuela, { foreignKey: 'escuelaId', as: 'escuela', allowNull: true });
 Escuela.hasMany(Miembro, { foreignKey: 'escuelaId', as: 'miembros' });
 
 // Relación Escuela -> Líder (Uno a Uno, pero el líder es un Miembro)

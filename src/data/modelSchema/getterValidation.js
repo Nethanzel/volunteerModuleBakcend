@@ -13,8 +13,20 @@ const queryIdentity = Joi.object({
     email: Joi.string().optional()
 });
 
+const queryByIdAndPage = Joi.object({
+    id: Joi.number().required(),
+    page: Joi.number().optional(),
+    shorten: Joi.boolean().optional(),
+});
+
+const queryMemberCode = Joi.object({
+    'member-code': Joi.string().optional(),
+});
+
 module.exports = {
     queryByPageNumber,
     queryIdentity,
     queryById,
+    queryByIdAndPage,
+    queryMemberCode
 }
