@@ -1,5 +1,4 @@
 const sharp = require("sharp");
-const fs = require("fs");
 
 async function ChangeimageSize(imagePath, imageSize) {
     return new Promise((resolve, reject) => {
@@ -18,7 +17,7 @@ async function GetImageSize(imagePath, newSize) {
             .then((metadata) => {
                 if (metadata.height && metadata.width) {
                     
-                    let newSz = resizeDimensions(metadata.width, metadata.height, 300);
+                    let newSz = resizeDimensions(metadata.width, metadata.height, newSize);
 
                     let newDimension = {
                         height: newSz.height,
@@ -34,10 +33,17 @@ async function GetImageSize(imagePath, newSize) {
     })
 }
 
-async function prepareImage(buffer, newSize) {
-    const imgBuffer = Buffer.from(buffer, Array.isArray(buffer) ? undefined : "base64");
-    const imageSize = await GetImageSize(imgBuffer, newSize);
-    return await ChangeimageSize(imgBuffer, imageSize);
+async function RotateImage(image) {
+    return await sharp(image)
+        .rotate()
+        .toBuffer()
+}
+
+async function prepareImage(imgArray, newSize) {
+    const imgBuffer = Buffer.from(imgArray, Array.isArray(imgArray) ? undefined : "base64");
+    const ratatedImage = await RotateImage(imgBuffer);
+    const imageSize = await GetImageSize(ratatedImage, newSize);
+    return await ChangeimageSize(ratatedImage, imageSize);
 }
 
 module.exports = {
@@ -62,4 +68,4 @@ function resizeDimensions(width, height, targetSize) {
     }
   
     return { width, height };
-  }
+}
