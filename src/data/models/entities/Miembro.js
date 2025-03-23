@@ -53,11 +53,11 @@ const Miembro = sequelize.define("Miembro", {
     //Datos de la direccion
     municipio: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     sector: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     calle: {
         type: DataTypes.STRING,
@@ -70,6 +70,23 @@ const Miembro = sequelize.define("Miembro", {
     apartamento: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    pais: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    estado: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    ciudad: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    otherCountry: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
     },
 
     //Datos de contacto

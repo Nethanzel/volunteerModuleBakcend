@@ -29,11 +29,21 @@ const miembroMV = Joi.object({
         telefono: Joi.string().pattern(/^(?:\+?\d{1,3})?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/).allow(""),
         celular: Joi.string().pattern(/^(?:\+?\d{1,3})?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/).optional().allow(""),
         email: Joi.string().email().optional().allow("", null),
-        municipio: Joi.number().required(),
-        sector: Joi.string().required(),
+
+        municipio: Joi.number().optional(),
+        sector: Joi.string().optional(),
         calle: Joi.string().optional().allow(null, ""),
         casa_no: Joi.string().optional().allow(null, ""),
         apartamento: Joi.string().optional().allow(null, ""),
+
+        otherCountry: Joi.boolean().optional(),
+
+        country: Joi.string().optional(),
+        state: Joi.string().optional(),
+        city: Joi.string().optional(),
+        street: Joi.string().optional().allow(null, ""),
+        building: Joi.string().optional().allow(null, ""),
+
         identity: Joi.string().optional().allow(null, ""),
         nombre: Joi.string().required(),
         apellido: Joi.string().required(),

@@ -154,12 +154,24 @@ function memberPrepare(props) {
         correo: props["step_2"].email,
 
         //Datos de la direccion
-        municipio: Number(props["step_2"].municipio),
-        apartamento: props["step_2"].apartamento ? props["step_2"].apartamento : null,
-        sector: props["step_2"].sector,
-        casa: props["step_2"].casa_no,
-        calle: props["step_2"].calle,
+        ...(props["step_2"].otherCountry ?
+        {
+            pais: props["step_2"].country,
+            estado: props["step_2"].state,
+            ciudad: props["step_2"].city,
+            calle: props["step_2"].street,
+            casa: props["step_2"].building
+        }
+        :
+        {
+            municipio: Number(props["step_2"].municipio),
+            apartamento: props["step_2"].apartamento ? props["step_2"].apartamento : null,
+            sector: props["step_2"].sector,
+            casa: props["step_2"].casa_no,
+            calle: props["step_2"].calle,
+        }),
 
+        otherCountry: props["step_2"].otherCountry,
         tutorInfo: props["step_2"].tutorInfo,
 
         //Datos personales
