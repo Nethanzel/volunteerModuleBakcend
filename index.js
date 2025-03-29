@@ -36,8 +36,8 @@ async function ConfigureApp() {
     app.use("/api/erase", eraserRoutes);
     app.use("/api/files", fileRoutes);
 
-    app.use('/', express.static(path.join(__dirname, "src/client/")));
     app.use(history());
+    app.use('/', express.static(path.join(__dirname, "src/client/")));
 
     app.listen(app.get("PORT"), () => console.log("The service is running on port ", app.get("PORT")));
 
