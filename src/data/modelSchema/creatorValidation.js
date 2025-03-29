@@ -84,10 +84,10 @@ const miembroMV = Joi.object({
         grado: Joi.number().required(),
         tipoMiembro: Joi.number().required(),
         identificacion: Joi.boolean().required().allow(null),
-        identificacionDetails: Joi.string().optional().allow(null,""),
+        identificacionDetails: Joi.string().optional().allow(null,"").max(100),
         otherMartialArt: Joi.boolean().required().allow(null),
-        otherMartialArtDetails: Joi.string().optional().allow(null,""),
-        desire: Joi.string().optional().allow(null,""),
+        otherMartialArtDetails: Joi.string().optional().allow(null,"").max(100),
+        desire: Joi.string().optional().allow(null,"").max(175),
         interested: Joi.number().required().allow(null),
     }).required(),
     step_5: Joi.object().keys({

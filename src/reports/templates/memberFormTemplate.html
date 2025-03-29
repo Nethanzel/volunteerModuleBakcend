@@ -1,0 +1,428 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Pricing Template</title>
+        <style>
+            @font-face {
+                font-family: "Carme";
+                src: url('{{customFont}}') format('opentype');
+            }
+            @font-face {
+                font-family: "Carme";
+                src: url('{{customFontBold}}') format('opentype');
+                font-weight: bold;
+            }
+
+            * {
+                text-decoration: none;
+                padding: 0;
+                margin: 0;
+                font-family: 'Carme';
+                letter-spacing: 1px;
+            }
+
+            html {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+        
+            #printPage {
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                height: 100%;
+            }
+        
+            h1 {
+                font-size: 25px;
+            }
+
+            h1, h2 {
+                text-align: center;
+                font-weight: bold;
+            }
+
+            .header {
+                width: 100%;
+                margin: 0px 0 0px 0;
+                padding: 0 0px 0 10px;
+            }
+
+            .header table td .title {
+                display: flex;
+                justify-content: center;
+                margin-top: 10px;
+            }
+
+            .header table td .title .text {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                margin: auto 0;
+            }
+            
+            .header table td img {
+                width: 55px;
+                height: 55px;
+                margin: 0 10px 0 0;
+            }
+
+            .header table td p {
+                font-size: 16px;
+                margin-top: 5px;
+            }
+
+            .header table td p span {
+                display: block;
+                text-align: left;
+            }
+
+            .body {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                min-height: 845px;
+            }
+
+            .body .section {
+                width: calc(100% - (20px + 5%));
+                margin: 15px auto 0 auto;
+                padding: 0 10px;
+                height: auto;
+
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .body h2 {
+                font-size: 20px;
+                margin-top: 10px;
+                color: #4b4b4b;
+                text-align: left;
+                margin-left: 65px;
+            }
+
+            .body .sub {
+                text-align: left;
+                margin-left: 45px;
+                font-size: 15px;
+                color: #ff5555;
+            }
+
+            .body .section .dataField {
+                width: auto;
+                font-weight: bold;
+                display: inline-block;
+                margin-right: 15px;
+                margin-bottom: 10px;
+                font-size: 13px;
+                min-height: 15px;
+            }
+
+            .body .section .dataField span {
+                font-weight: lighter;
+                display: inline-block;
+                border-bottom: 1px solid black;
+                padding: 0 8px 3px 8px;
+                min-width: 20px;
+                min-height: 15px;
+            } 
+
+            .body .section .contact {
+                border: 1px solid #cdcdcd;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                padding: 3px 8px 5px 8px;
+                margin: 0 10px;
+            }
+
+            .body .section .contact .dataField {
+                margin-right: 0px;
+                margin-bottom: 0px;
+            }
+
+            .body .section .contact .dataField span {
+                padding: 0 8px 0px 8px;
+                border: none;
+            }
+
+            .details {
+                max-height: 345px;
+                padding: 0 20px 0 0;
+            }
+
+
+            .details h2 {
+                margin: 10px 0 5px 0;
+            }
+
+            .date {
+                text-align: right;
+                font-size: 12px;
+            }
+
+            .details .to {
+                text-align: left;
+                margin: 25px 0 5px 0;
+            }
+
+            .details .to p {
+                margin: 5px 0;
+                font-size: 14px;
+            }
+
+            .details .to p span {
+                font-weight: bold;
+            }
+
+            table {
+                border-collapse: collapse;
+                width: calc(100% - 20px);
+            }
+
+            tr {
+                font-size: 12px;
+            }
+
+            tr td {
+                padding: 0 0 0 0;
+                text-align: center;
+            }
+            
+            .tHead {
+                background-color: #000;
+                height: 35px;
+                color: #fff;
+                font-size: 13px;
+                font-weight: bold;
+            }
+
+            .footer {
+                display: flex;
+                flex-direction: row-reverse;
+                max-height: 150px;
+                overflow: hidden;
+                padding: 0 60px 0 60px;
+            }
+
+            .footer table td:nth-child(1) img {
+                max-width: 60px;
+                max-height: 60px;
+            }
+
+            .footer table td:nth-child(2) {
+                padding: 0 0 0 20px;
+            }
+
+            .footer table td:nth-child(2) p {
+                text-align: left;
+                font-size: 12px;
+                line-height: 15px;
+            }
+
+            .footer table td:nth-child(2) p span {
+                font-weight: bold;
+            }
+
+            .info-message {
+                display: flex;
+                padding: 0px 10px 0px 5px;
+                max-width: 450px;
+                margin: 0px auto;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                user-select: none;
+                background-color: #00000029;
+            }
+            .info-message .content p {
+                margin: 10px 0;
+                font-size: 14px;
+            }
+            .info-message .content .title {
+                font-weight: bold;
+                font-size: 13px;
+            }
+            .info-message .icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 5px 0;
+                margin-right: 15px;
+                margin-left: 5px;
+            }
+            .info-message .icon img {
+                height: 20px;
+                width: 20px;
+            }
+            .warn {
+                background-color: #ffc8004e;
+                outline: 1px solid #ffc800;
+                border-left: 5px solid #ffc800;
+            }
+        </style>
+    </head>
+    <body>
+        <section id="printPage">
+            <div class="header">
+                <table>
+                    <tr>
+                        <td style="text-align: center;">
+                            <div class="title">
+                                <img src="{{logo}}" alt="logo">
+                                <div class="text">
+                                    <p style="font-size: 19px;">Asosiación Dominicana de</p>
+                                    <h2 style="text-align: center; margin-top: -4px;">Kung-Fu Wushu Bak She Pai</h2>
+                                </div>
+                            </div>
+                            <p style="font-style: italic;">
+                                "La peor guerra a la que puedes asistir es donde tú eres tu propio adversario"
+                            </p>
+                        </td>
+                    </tr>   
+                </table>
+            </div>
+
+            <div class="body">
+                <h1 style="margin-top: 5px;">Formulario de inscripción</h1>
+
+                <h2>Información personal</h2>
+                <div class="section">
+                    <p class="dataField">Nombre: <span>{{member.nombre}}</span></p>
+                    <p class="dataField">Apellido: <span style="min-width: 90px;">{{member.apellido}}</span></p>
+                    <p class="dataField">Lugar de nacimiento: <span>{{member.lugarNacimiento}}</span></p>
+                    <p class="dataField">Fecha de nacimiento: <span>{{member.nacimiento}}</span></p>
+                    <p class="dataField">Cédula: <span style="min-width: 90px;">{{member.identity}}</span></p>
+                    <p class="dataField">Ocupacion: <span style="min-width: 90px;">{{member.ocupacion}}</span></p>
+                </div>
+
+                <h2 class="sub">Dirección</h2>
+                <div class="section">
+                    <!-- <p class="dataField">Vive en otro pais: <span>{{member.otroPais}}</span></p> -->
+                    {{#if member.otherCountry}}
+                    <p class="dataField">Pais: <span>{{member.pais}}</span></p>
+                    <p class="dataField">Estado/Provincia: <span>{{member.estado}}</span></p>
+                    <p class="dataField">Ciudad/Poblado: <span style="min-width: 90px;">{{member.ciudad}}</span></p>
+                    <p class="dataField">Casa/Edificio: <span style="min-width: 90px;">{{member.casa}}</span></p>
+                    <p class="dataField">Apartamento: <span style="min-width: 90px;">{{member.apartamento}}</span></p>
+                    {{else}}
+                    <p class="dataField">Provincia: <span>{{member.provincia}}</span></p>
+                    <p class="dataField">Municipio: <span>{{member.municipio}}</span></p>
+                    <p class="dataField">Sector: <span style="min-width: 90px;">{{member.sector}}</span></p>
+                    <p class="dataField">Calle: <span style="min-width: 90px;">{{member.calle}}</span></p>
+                    <p class="dataField">Casa: <span style="min-width: 90px;">{{member.casa}}</span></p>
+                    <p class="dataField">Apartamento: <span style="min-width: 90px;">{{member.apartamento}}</span></p>
+                    {{/if}}
+                </div>
+
+                {{#if member.isMinorAged}}
+                {{else}}
+                <h2 class="sub">Contacto</h2>
+                <div class="section">
+                    <p class="dataField">Correo: <span>{{member.correo}}</span></p>
+                    <p class="dataField">Celular: <span>{{member.celular}}</span></p>
+                    <p class="dataField">Telefono fijo: <span style="min-width: 90px;">{{member.telefonoFijo}}</span></p>
+                </div>
+                {{/if}}
+
+                <h2>Información institucional</h2>
+                <div class="section">
+                    <p class="dataField">Escuela: <span>{{member.escuela.nombre}}</span></p>
+                    <p class="dataField">Grado: <span>{{member.Grado.prefix}} {{member.Grado.grado}}</span></p>
+                    <p class="dataField">¿Qué desea prácticar? <span>{{member.interested}}</span></p>
+                    <!-- <p class="dataField">¿Tiene uniforme? <span>{{member.tieneUniforme}}</span></p> -->
+                    <p class="dataField" style="width: 100%;">Uniforme que tengo: <span style="width: 100%; padding-top: 5px;">{{member.idetifications}}</span></p>
+                    <!-- <p class="dataField">¿Ha prácticado otros estilos? <span>{{member.otrasArtesMarciales}}</span></p> -->
+                    <p class="dataField" style="width: 100%;">¿Qué otros estilos ha prácticado?: <span style="width: 100%; padding-top: 5px;">{{member.otherMartialArtDetails}}</span></p>
+                    <p class="dataField" style="width: 100%;">Me interesa practicar porque...: <span style="width: 100%; padding-top: 5px;">{{member.desire}}</span></p>
+                    <p class="dataField">Tipo miembro: <span>{{member.TipoMiembro.tipo}}</span></p>
+                </div>
+
+                {{#if member.isMinorAged}}
+                <h2>Contacto con los tutores</h2>
+
+                <div class="info-message warn" style="margin-top: 10px;">
+
+                    <div class="icon">
+                        <img src="{{warn}}" alt="warn">
+                    </div>
+
+                    <div class="content">
+                        <p class="title">
+                            Este miembro es menor de edad!
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="section">
+                    {{#each member.tutorInfo}}
+                    <div class="contact">
+                        <p class="dataField">Nombre: <span>{{this.name}} ({{this.relation}})</span></p>
+                        <p class="dataField">Telefono: <span>{{this.phone}}</span></p>
+                        <p class="dataField">Otro telefono: <span>{{this.otherPhone}}</span></p>
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <h2>Contactos de emergencia</h2>
+                <div class="section">
+                    {{#each member.contactoEmergencia}}
+                    <div class="contact">
+                        <p class="dataField">Nombre: <span>{{this.name}} ({{this.relation}})</span></p>
+                        <p class="dataField">Telefono: <span>{{this.phone}}</span></p>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                <h2>Información importante</h2>
+                <div class="section">
+                    <p class="dataField" style="width: 100%;">
+                        ¿Es alergico a algun medicamento? 
+                        <span>{{member.alergies}}</span> 
+                        {{#if member.alergia}}<span>{{member.alergiaDetalles}}</span>{{/if}}
+                    </p>
+
+                    <p class="dataField" style="width: 100%;">
+                        ¿Sufre alguna condición de salud? <span>{{member.sick}}</span> 
+                        {{#if member.enfermedad}}<span>{{member.enfermedadDetalles}}</span>{{/if}}
+                    </p>
+
+                    <p class="dataField">¿Tiene seguro medico? <span>{{member.seguro}}</span></p>
+                    {{#if member.assurance}}
+                    <p class="dataField">Aseguradora: <span>{{member.assuranceCompany}}</span></p>
+                    <p class="dataField">Código afiliado: <span>{{member.assuranceCode}}</span></p>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="footer" style="margin-top: auto; padding-bottom: 15px;">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="{{qr}}" alt="confirmation-code">
+                        </td>
+                        <td>
+                            <p>
+                                Puede validar este documento visitando <span>{{member.referenceCode}}</span>
+                                o escaneando el código QR a la izquierda.
+                            </p>
+                            
+                            <p class="date" style="margin-top: 10px;">Generado el dia {{member.queryTime}}.</p>
+                        </td>
+                    </tr>   
+                </table>
+            </div>
+        </section>
+
+    </body>
+</html>

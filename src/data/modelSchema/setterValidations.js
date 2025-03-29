@@ -20,6 +20,7 @@ const userFieldValidation = Joi.object({
         enfermedad: Joi.boolean().optional(),
         enfermedadDetalles: Joi.string().optional().allow("", null),
         identity: Joi.string().max(13).optional(),
+        genero: Joi.string().max(1).optional(),
         nombre: Joi.string().optional(),
         apellido: Joi.string().optional(),
         nacionalidad: Joi.string().optional(),
@@ -31,7 +32,7 @@ const userFieldValidation = Joi.object({
         ciudad: Joi.string().optional(),
         sector: Joi.string().optional(),
         calle: Joi.string().optional(),
-        casa: Joi.number().optional(),
+        casa: Joi.string().optional(),
         apartamento: Joi.string().optional(),
         correo: Joi.string().optional(),
         celular: Joi.string().optional(),
@@ -42,7 +43,7 @@ const userFieldValidation = Joi.object({
         grado: Joi.number().optional(),
         tipomiembro: Joi.number().optional(),
         hasIdentification: Joi.boolean().optional(),
-        idetifications: Joi.string().optional().allow("", null),
+        idetifications: Joi.string().optional().allow("", null).max(100),
         assurance: Joi.boolean().optional(),
         assuranceCompany: Joi.string().optional(),
         assuranceCode: Joi.string().optional(),
@@ -54,8 +55,8 @@ const userFieldValidation = Joi.object({
         TipoMiembroId: Joi.number().optional(),
         interested: Joi.number().optional(),
         otherMartialArt: Joi.boolean().optional(),
-        desire: Joi.string().optional(),
-        otherMartialArtDetails: Joi.string().optional().allow("", null),
+        desire: Joi.string().optional().max(175),
+        otherMartialArtDetails: Joi.string().optional().allow("", null).max(100),
     }).required()
 });
 

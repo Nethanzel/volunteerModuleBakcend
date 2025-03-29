@@ -10,7 +10,7 @@ router.get("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), Valida
     let { id } = req.query
     
     let miembro = await getMember(id, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
-    if(!miembro) return res.status(404).send({status: 404, message: "No results where found."});
+    if(!miembro) return res.status(404).send({status: 404, message: "Registro no encontrado."});
 
     res.status(200).send(miembro);
 });
@@ -18,7 +18,7 @@ router.get("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), Valida
 router.get("/miembros", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryByPageNumber), validatePermission(["QVL"]), async (req, res) => {
     let { page } = req.query;
     let miembros = await getMembers(page, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
-    if(!miembros) return res.status(404).send({status: 404, message: "No results where found."});
+    if(!miembros) return res.status(404).send({status: 404, message: "No se encontraron registros."});
 
     res.status(200).send(miembros);
 });
@@ -26,7 +26,7 @@ router.get("/miembros", ValidateHeader(authorizeSchema), authorizeGuard(), Valid
 router.get("/miembros/nombres", ValidateHeader(authorizeSchema), authorizeGuard(), validatePermission(["QVL"]), async (req, res) => {
     let { id, name } = req.query;
     let miembros = await getMembersNames(id, name).catch(() => false);
-    if(!miembros) return res.status(404).send({status: 404, message: "No results where found."});
+    if(!miembros) return res.status(404).send({status: 404, message: "No se encontraron registros."});
     res.status(200).send(miembros);
 });
 
@@ -34,7 +34,7 @@ router.get("/escuela", ValidateHeader(authorizeSchema), authorizeGuard(), Valida
     let { id } = req.query;
 
     let escuela = await getEscuela(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
-    if(!escuela) return res.status(404).send({status: 404, message: "No results where found."});
+    if(!escuela) return res.status(404).send({status: 404, message: "No se encontraron registros."});
     
     res.status(200).send(escuela);
 });
@@ -43,7 +43,7 @@ router.get("/tipo-miembro", ValidateHeader(authorizeSchema), authorizeGuard(), V
     let { id } = req.query;
 
     let tipo = await getTipoMiembro(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
-    if(!tipo) return res.status(404).send({status: 404, message: "No results where found."});
+    if(!tipo) return res.status(404).send({status: 404, message: "No se encontraron registros."});
     
     res.status(200).send(tipo);
 });
@@ -52,7 +52,7 @@ router.get("/grado", ValidateHeader(authorizeSchema), authorizeGuard(), Validate
     let { id } = req.query;
 
     let grado = await getGrado(id, isAllowedToPermission(["QDI"], req.user.permissions)).catch(() => false);
-    if(!grado) return res.status(404).send({status: 404, message: "No results where found."});
+    if(!grado) return res.status(404).send({status: 404, message: "No se encontraron registros."});
     
     res.status(200).send(grado);
 });

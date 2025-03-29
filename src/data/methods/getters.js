@@ -26,8 +26,6 @@ async function getMember(id, allowDeleted, allowDeletedFiles = false, viewNonCof
 
         return member.toJSON();
     } catch(e) {
-        console.log(e);
-        
         return null;
     }
 }
@@ -41,29 +39,38 @@ async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNon
                 deleted: { [Op.in]: allowDeleted ? [true, false] : [false] }, 
                 checked: { [Op.in]: viewNonCofirmed ? [true, false] : [true] }
             },
-            limit: limit,
+            ...(page != null ? { limit: limit } : {}),
             order: [['id', 'DESC']],
-            offset: 0 + (Number(page) - 1) * limit,
+            ...(page != null ? { offset: 0 + (Number(page) - 1) * limit } : {}),
             include: [
                 { model: Grado },
                 { model: TipoMiembro },
                 { model: Escuela, as: "escuela", required: false },
-                { model: Archivo, where: { fileName: "Profile Photo" }, required: false }
-            ]
+                ...(page == null ? [] : [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }])
+            ],
+            ...(page == null ? { attributes:['nombre','apellido','nacimiento','referenceCode','celular','telefonoFijo','otherCountry','municipio','pais','estado','checked'] } : {}),
         });
 
         result['count'] = memberList.count;
         result['limit'] = limit;
         result['rows'] = [];
 
-        await Promise.all(memberList.rows.map(async (member) => {
-            let otherFiles = await getUserFiles(member.id, allowDeletedFiles);
-            otherFiles.forEach(f => member.Archivos.push(f));
-
-            let data = member.toJSON();
-            delete data.password;
-            result.rows.push(data);
-        }));
+        if (page != null) {
+            await Promise.all(memberList.rows.map(async (member) => {
+                let otherFiles = await getUserFiles(member.id, allowDeletedFiles);
+                otherFiles.forEach(f => member.Archivos.push(f));
+                let data = member.toJSON();
+                delete data.password;
+                result.rows.push(data);
+            }));
+        }
+        else {
+            memberList.rows.map(async (member) => {
+                let data = member.toJSON();
+                delete data.password;
+                result.rows.push(data);
+            });
+        }
 
         return result;
     } catch {

@@ -210,7 +210,15 @@ const PermissionsList = [
     {
         description: "Actualizar prácticas",
         key: "UPR"
-    }
+    },
+    {
+        description: "Generar formulario de miembro",
+        key: "PMF"
+    },
+    {
+        description: "Generar listado de miembros",
+        key: "PML"
+    },
 ]
 
 function validatePermission(requiredKeys) {

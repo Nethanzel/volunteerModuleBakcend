@@ -1,11 +1,12 @@
 const router = require('express').Router();
 const { ValidateQuery } = require('../data/methods/validators.js');
 const { authorizeGuard } = require('../data/methods/authorizer.js');
+const { convertFromBase64 } = require('../reports/assets/utils.js');
 const { dayOfWeek } = require('../data/models/dictionaries/dayOfWeek.js');
 const { isAllowedToPermission } = require('../data/models/permissions.js');
-const { queryIdentity, queryMemberCode } = require('../data/modelSchema/getterValidation.js');
 const { validateEmail } = require('../data/modelSchema/creatorValidation.js');
 const { trainingTypes } = require('../data/models/dictionaries/trainingTypes.js');
+const { queryIdentity, queryMemberCode } = require('../data/modelSchema/getterValidation.js');
 const {getGrados, getEscuelas, getTipoMiembros, getIdentificationExistence, getHighlights, getMember} = require("../data/methods/getters.js");
 
 router.get("/escuelas", authorizeGuard(true), async (req, res) => {
@@ -55,8 +56,8 @@ router.get("/identification-existis", ValidateQuery(queryIdentity), async (req, 
 });
 
 router.get("/miembro", ValidateQuery(queryMemberCode), async (req, res) => {
-    let miembro = await getMember(null, false, false, false, req.query['member-code']).catch(() => false);
-    if(!miembro) return res.status(404).send({status: 404, message: "No results where found."});
+    let miembro = await getMember(null, false, false, false, convertFromBase64(req.query['member-code'])).catch(() => false);
+    if(!miembro) return res.status(404).send({status: 404, message: "Registro no encontrado."});
 
     res.status(200).send(miembro);
 });

@@ -49,6 +49,10 @@ const Miembro = sequelize.define("Miembro", {
         type: DataTypes.DECIMAL(3,1),
         allowNull: true
     },
+    genero: {
+        type: DataTypes.STRING(1),
+        allowNull: true
+    },
 
     //Datos de la direccion
     municipio: {
