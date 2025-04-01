@@ -103,7 +103,8 @@
 
             .body h2 {
                 font-size: 20px;
-                margin-top: 10px;
+                margin-top: 7px;
+                margin-bottom: 5px;
                 color: #4b4b4b;
                 text-align: left;
                 margin-left: 65px;
@@ -142,7 +143,7 @@
                 flex-direction: column;
                 align-items: flex-start;
                 justify-content: center;
-                padding: 6px 8px 5px 6px;
+                padding: 6px 8px 5px 10px;
                 margin: 0 10px;
             }
 
@@ -155,35 +156,6 @@
                 padding: 0 8px 0px 8px;
                 font-size: 10.5px;
                 border: none;
-            }
-
-            .details {
-                max-height: 345px;
-                padding: 0 20px 0 0;
-            }
-
-
-            .details h2 {
-                margin: 10px 0 5px 0;
-            }
-
-            .date {
-                text-align: right;
-                font-size: 12px;
-            }
-
-            .details .to {
-                text-align: left;
-                margin: 25px 0 5px 0;
-            }
-
-            .details .to p {
-                margin: 5px 0;
-                font-size: 14px;
-            }
-
-            .details .to p span {
-                font-weight: bold;
             }
 
             table {
@@ -321,7 +293,7 @@
                     <p class="dataField">Sector: <span style="min-width: 90px;">{{member.sector}}</span></p>
                     <p class="dataField">Calle: <span style="min-width: 90px;">{{member.calle}}</span></p>
                     <p class="dataField">Casa: <span style="min-width: 90px;">{{member.casa}}</span></p>
-                    <p class="dataField">Apartamento: <span style="min-width: 90px;">{{member.apartamento}}</span></p>
+                    <p class="dataField">Apartamento: <span style="min-width: 45px;">{{member.apartamento}}</span></p>
                     {{/if}}
                 </div>
 
@@ -331,7 +303,7 @@
                 <div class="section">
                     <p class="dataField">Correo: <span>{{member.correo}}</span></p>
                     <p class="dataField">Celular: <span>{{member.celular}}</span></p>
-                    <p class="dataField">Telefono fijo: <span style="min-width: 90px;">{{member.telefonoFijo}}</span></p>
+                    <p class="dataField">Telefono fijo: <span style="min-width: 550px;">{{member.telefonoFijo}}</span></p>
                 </div>
                 {{/if}}
 
