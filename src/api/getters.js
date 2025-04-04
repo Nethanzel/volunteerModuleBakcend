@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const { authorizeGuard } = require('../data/methods/authorizer.js');
 const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js');
-const { ValidateQuery, ValidateHeader } = require("../data/methods/validators.js");
-const { queryById, queryByPageNumber, queryByIdAndPage } = require("../data/modelSchema/getterValidation.js");
+const { ValidateQuery, ValidateHeader, ValidateFilters } = require("../data/methods/validators.js");
+const { queryById, queryByPageNumber, queryByIdAndPage, memberQueryFilters } = require("../data/modelSchema/getterValidation.js");
 const { validatePermission, PermissionsList, isAllowedToPermission } = require('../data/models/permissions.js');
 const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers, getMembersNames, getHighlights, getSchoolSchedule, getSchoolPractices } = require("../data/methods/getters.js");
 
@@ -16,8 +16,12 @@ router.get("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), Valida
 });
 
 router.get("/miembros", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryByPageNumber), validatePermission(["QVL"]), async (req, res) => {
-    let { page } = req.query;
-    let miembros = await getMembers(page, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
+    let { page, filters } = req.query;
+    
+    let filterValidation = ValidateFilters(memberQueryFilters, filters);
+    if (!filterValidation.isValid) return res.status(filterValidation.status).send({ status: filterValidation.status, message: filterValidation.message });  
+    
+    let miembros = await getMembers(page, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions), filterValidation.filters).catch(() => false);
     if(!miembros) return res.status(404).send({status: 404, message: "No se encontraron registros."});
 
     res.status(200).send(miembros);

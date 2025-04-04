@@ -1,4 +1,5 @@
 const { Miembro, Grado, Escuela, TipoMiembro, Archivo, Highlight, Schedule, Practica, Asistencia } = require("../models/index.js");
+const { getFilters } = require("../filtersMaker.js");
 const { sequelize } = require("../sqlConnection.js");
 const { Op } = require("sequelize");
 const limit = 15;
@@ -30,14 +31,16 @@ async function getMember(id, allowDeleted, allowDeletedFiles = false, viewNonCof
     }
 }
 
-async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false) {
-    let result = {};
-
+async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false, filters = null) {
     try {
+        let result = {};
+        filters = filters ? getFilters(filters) : null;
+
         const memberList = await Miembro.findAndCountAll({
             where: { 
-                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] }, 
-                checked: { [Op.in]: viewNonCofirmed ? [true, false] : [true] }
+                deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
+                checked: { [Op.in]: viewNonCofirmed ? [true, false] : [true] },
+                ...(filters ? filters : {})
             },
             ...(page != null ? { limit: limit } : {}),
             order: [['id', 'DESC']],
@@ -48,7 +51,7 @@ async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNon
                 { model: Escuela, as: "escuela", required: false },
                 ...(page == null ? [] : [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }])
             ],
-            ...(page == null ? { attributes:['nombre','apellido','nacimiento','referenceCode','celular','telefonoFijo','otherCountry','municipio','pais','estado','checked'] } : {}),
+            ...(page == null ? { attributes:['nombre','apellido','nacimiento','referenceCode','celular','telefonoFijo','otherCountry','municipio','pais','estado','checked','deleted'] } : {}),
         });
 
         result['count'] = memberList.count;
@@ -73,7 +76,9 @@ async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNon
         }
 
         return result;
-    } catch {
+    } catch (e) {
+        console.log(e);
+        
         return null;
     }
 }

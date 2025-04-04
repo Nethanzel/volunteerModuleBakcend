@@ -1,9 +1,10 @@
 const { validatePermission, isAllowedToPermission } = require('../data/models/permissions');
 const { generateMemberForm, generateMembersForm } = require('../reports/printer/print');
+const { ValidateHeader, ValidateFilters } = require('../data/methods/validators');
 const { authorizeSchema } = require('../data/modelSchema/authorizeValidations');
+const { memberQueryFilters } = require('../data/modelSchema/getterValidation');
 const { getMember, getMembers } = require('../data/methods/getters');
 const { authorizeGuard } = require('../data/methods/authorizer');
-const { ValidateHeader } = require('../data/methods/validators');
 const router = require('express').Router();
 
 router.get("/print/member", ValidateHeader(authorizeSchema), authorizeGuard(), validatePermission(["QV","PMF"]), async (req, res) => {
@@ -25,10 +26,15 @@ router.get("/print/member", ValidateHeader(authorizeSchema), authorizeGuard(), v
 });
 
 router.get("/print/members", ValidateHeader(authorizeSchema), authorizeGuard(), validatePermission(["QVL","PML"]), async (req, res) => {
-    let miembros = await getMembers(null, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
+    let { filters } = req.query;
+
+    let filterValidation = ValidateFilters(memberQueryFilters, filters);
+    if (!filterValidation.isValid) return res.status(filterValidation.status).send({ status: filterValidation.status, message: filterValidation.message });  
+    
+    let miembros = await getMembers(null, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions), filterValidation.filters).catch(() => false);
     
     if(miembros?.count > 0) {
-        let pdf = await generateMembersForm(miembros);
+        let pdf = await generateMembersForm(miembros, filterValidation.filters);
         if (!pdf) return res.status(503).send({status: 503, message: "No se pudo generar el reporte."});
 
         res.setHeader("Content-Length", pdf.length);

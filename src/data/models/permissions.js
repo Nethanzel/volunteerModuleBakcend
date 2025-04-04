@@ -71,6 +71,10 @@ const PermissionsList = [
         description: "Restaurar grado",
         key: "RD"
     },
+    {
+        description: "Visualizar grados",
+        key: "VD"
+    },
     /* {
         description: "Consultar tipo miembro",
         key: "QVT" NO SE REQUIERE PORQUE ES UNA CONSULTA ABIERTA
@@ -91,6 +95,10 @@ const PermissionsList = [
         description: "Restaurar tipo miembro",
         key: "RVT"
     },
+    {
+        description: "Visualizar tipo miembros",
+        key: "VVT"
+    },
 /*     {
         description: "Consultar escuelas",
         key: "QS" NO SE REQUIERE PORQUE ES UNA CONSULTA ABIERTA
@@ -110,6 +118,10 @@ const PermissionsList = [
     {
         description: "Restaurar escuela",
         key: "RE"
+    },
+    {
+        description: "Visualizar escuelas",
+        key: "VE"
     },
     {
         description: "Consultar archivos",

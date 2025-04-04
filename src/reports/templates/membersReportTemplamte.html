@@ -154,11 +154,49 @@
                 border: none;
             }
 
+            .body .filters {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 0px 20px 10px 20px;
+                width: calc(100% - 40px);
+                max-width: 800px;
+                margin: 0 auto;
+                margin-top: 5px;
+                height: auto;                
+            }
+
+            .body .filters p {
+                margin: 0 auto;
+                font-size: 15px;
+                margin-bottom: 4px;
+            }
+
+            .body .filters .tags {
+                text-align: center;
+            }
+
+            .body .filters .tags span {
+                cursor: default;
+                margin: 4px 3px;
+                padding: 3px 8px 3px 8px;
+                font-size: 12px;
+                display: inline-block;
+                background-color: #00000018;
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+                outline: #80808093 1px solid;
+                border-left: #808080 3px solid;
+            }
+
+            .body .filters .tags span b {
+                font-size: 11px;
+            }
+
             .details {
                 max-height: 345px;
                 padding: 0 20px 0 0;
             }
-
 
             .details h2 {
                 margin: 10px 0 5px 0;
@@ -190,12 +228,13 @@
                 padding: 15px 0 0 0;
             }
 
-/*             .tableWrapper table .row-0 {
-                background-color: #eaeaea;
-            } */
-
             .tableWrapper table .no-check {
                 background-color: #ffeab9;
+            }
+
+            .tableWrapper table .deleted {
+                background-color: #e2e2e2;
+                opacity: .35;
             }
 
             .tableWrapper table tr {
@@ -208,14 +247,14 @@
             }
 
             tr {
-                font-size: 10px;
+                font-size: 11px;
             }
 
             tr td {
                 padding: 5px 0 5px 0;
                 text-align: center;
                 font-family: unset;
-                font-size: 10px;
+                font-size: 11px;
             }
 
             tr th {
@@ -281,6 +320,17 @@
             <div class="body">
                 <h1 style="margin-top: 10px;">Listado de miembros</h1>
 
+                {{#if hasFilters}}
+                <div class="filters">
+                    <!-- <p>Filtros aplicados:</p> -->
+                    <div class="tags">
+                        {{# each filters}}
+                        <span><b>{{ this.description.display }}</b>: {{ this.description.value }}</span>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+
                 <p class="date" style="margin-top: 10px;">Total de miembros: {{members.rows.length}}</p>
                 <p class="date">Generado el dia {{members.queryTime}}</p>
 
@@ -298,7 +348,7 @@
                         </tr>
 
                         {{#each members.rows}}
-                        <tr class="row-{{this.classIndex}} {{#if this.checked}}{{else}}no-check{{/if}}">
+                        <tr class="row-{{this.classIndex}} {{#if this.checked}}{{else}}no-check{{/if}} {{#if this.deleted}}deleted{{/if}}">
                             <td>{{this.pos}}</td>
                             <td>{{this.referenceCode}}</td>
                             <td>{{this.nombre}}</td>

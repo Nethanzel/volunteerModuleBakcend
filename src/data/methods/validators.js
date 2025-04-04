@@ -1,3 +1,5 @@
+const { convertFromBase64 } = require('../../reports/assets/utils');
+
 require('joi');
 
 function ValidateBody(schema) {
@@ -60,11 +62,25 @@ function ValidateHeader(schema) {
   };
 }
 
+function ValidateFilters(schema, filters) {
+  if (!filters) return { isValid: true, filters: null };
+  
+  filters = JSON.parse(convertFromBase64(filters));
+
+  console.log(filters);
+  
+  const { error } = schema.validate(filters);
+  if (error) return { status: 400, message: error.details[0].message, isValid: false };
+
+  return { isValid: true, filters }
+}
+
 module.exports = {
   ValidateBody,
   ValidateParams,
   ValidateQuery,
   ValidateHeader,
   ValidateFields,
-  ValidateFiles
+  ValidateFiles,
+  ValidateFilters
 }
