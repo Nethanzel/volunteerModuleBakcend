@@ -77,14 +77,6 @@ const memberQueryFilters = Joi.object({
         value: Joi.string().max(1).required(),
         type: Joi.string().required(),
     }).optional(),
-    email: Joi.object({
-        description: Joi.object({
-            display: Joi.string().required(),
-            description: Joi.string().required(),
-        }).required(),
-        value: Joi.string().required(),
-        type: Joi.string().required(),
-    }).optional(),
 
     peso: Joi.object({
         description: Joi.object({
@@ -109,7 +101,24 @@ const memberQueryFilters = Joi.object({
         }).required(),
         value: Joi.array().items(Joi.date().iso().required()),
         type: Joi.string().required(),
-    }).optional()
+    }).optional(),
+
+    checked: Joi.object({
+        description: Joi.object({
+            display: Joi.string().required(),
+            value: Joi.string().required(),
+        }).required(),
+        value: Joi.boolean().required(),
+        type: Joi.string().required(),
+    }).optional(),
+    deleted: Joi.object({
+        description: Joi.object({
+            display: Joi.string().required(),
+            value: Joi.string().required(),
+        }).required(),
+        value: Joi.boolean().required(),
+        type: Joi.string().required(),
+    }).optional(),
 });
 
 const queryByPageNumber = Joi.object({

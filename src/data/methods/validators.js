@@ -67,8 +67,6 @@ function ValidateFilters(schema, filters) {
   
   filters = JSON.parse(convertFromBase64(filters));
 
-  console.log(filters);
-  
   const { error } = schema.validate(filters);
   if (error) return { status: 400, message: error.details[0].message, isValid: false };
 
