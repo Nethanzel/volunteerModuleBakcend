@@ -26,10 +26,10 @@ async function disableOtherAccess(identity) {
 async function accessValidity(access, includeAll = true) {
     try {
         let accessRecord = 
-        includeAll ? 
-            await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro, include: [{ model: Archivo, where: { fileName: "Profile Photo" } }] }] })
-        :
-            await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro }] });
+            includeAll ? 
+                await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro, include: [{ model: Archivo, where: { fileName: "Profile Photo" } }] }] })
+            :
+                await Autorizacion.findOne({ where: { id: access.aid }, include: [{ model: Miembro }] });
 
         if (!accessRecord) return null;
         if (!Boolean(accessRecord.active)) return null;
@@ -80,7 +80,7 @@ async function newAccess(params) {
             active: true,
             identity: user.id,
             releasedOn: new Date(),
-            expiresAt: new Date().setDate(new Date().getDate() +1)
+            expiresAt: new Date().setDate(new Date().getDate() +3)
         }
 
         let authResult = await createAuthorization(newAuthorization);
