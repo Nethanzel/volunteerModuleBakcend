@@ -2,9 +2,9 @@ const router = require('express').Router();
 const { authorizeGuard } = require('../data/methods/authorizer.js');
 const { authorizeSchema } = require('../data/modelSchema/authorizeValidations.js');
 const { ValidateQuery, ValidateHeader, ValidateFilters } = require("../data/methods/validators.js");
-const { queryById, queryByPageNumber, queryByIdAndPage, memberQueryFilters } = require("../data/modelSchema/getterValidation.js");
 const { validatePermission, PermissionsList, isAllowedToPermission } = require('../data/models/permissions.js');
-const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers, getMembersNames, getHighlights, getSchoolSchedule, getSchoolPractices } = require("../data/methods/getters.js");
+const { queryById, queryByPageNumber, queryByIdAndPage, memberQueryFilters, queryByIdAndPageOptional } = require("../data/modelSchema/getterValidation.js");
+const { getMember, getGrado, getEscuela, getTipoMiembro, getMembers, getMembersNames, getHighlights, getSchoolSchedule, getSchoolPractices, getLevelResume, getMembersResume } = require("../data/methods/getters.js");
 
 router.get("/miembro", ValidateHeader(authorizeSchema), authorizeGuard(), ValidateQuery(queryById), validatePermission(["QV"]), async (req, res) => {
     let { id } = req.query
@@ -77,9 +77,21 @@ router.get("/schedule", authorizeGuard(), validatePermission(["QPS"]), ValidateQ
     res.status(200).send(result);
 });
 
-router.get("/practice", authorizeGuard(), validatePermission(["QPR"]), ValidateQuery(queryByIdAndPage), async (req, res) => {
+router.get("/practice", authorizeGuard(), validatePermission(["QPR"]), ValidateQuery(queryByIdAndPageOptional), async (req, res) => {
     let { page, id } = req.query;
     let result = await getSchoolPractices(id, isAllowedToPermission(["QDI"], req.user?.permissions), page).catch(() => false);
+    if(!result) return res.status(503).send();
+    res.status(200).send(result);
+});
+
+router.get("/members-by-level", authorizeGuard(), async (req, res) => {
+    let result = await getLevelResume(isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
+    if(!result) return res.status(503).send();
+    res.status(200).send(result);
+});
+
+router.get("/members-resume", authorizeGuard(), async (req, res) => {
+    let result = await getMembersResume(isAllowedToPermission(["VNC"], req.user.permissions)).catch(() => false);
     if(!result) return res.status(503).send();
     res.status(200).send(result);
 });

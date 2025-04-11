@@ -137,6 +137,12 @@ const queryByIdAndPage = Joi.object({
     shorten: Joi.boolean().optional(),
 });
 
+const queryByIdAndPageOptional = Joi.object({
+    id: Joi.number().optional(),
+    page: Joi.number().optional(),
+    shorten: Joi.boolean().optional(),
+});
+
 const queryMemberCode = Joi.object({
     'member-code': Joi.string().optional(),
 });
@@ -147,5 +153,6 @@ module.exports = {
     queryIdentity,
     queryById,
     queryByIdAndPage,
-    queryMemberCode
+    queryMemberCode,
+    queryByIdAndPageOptional
 }

@@ -232,10 +232,10 @@ async function getSchoolPractices(id, allowDeleted, page) {
         let practicas = await Practica.findAndCountAll({
             where: {
                 deleted: { [Op.in]: allowDeleted ? [true, false] : [false] },
-                escuelaId: id
+                ...(id ? { escuelaId: id } : {})
             },
             distinct: true,
-            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : {}),
+            ...(page > 0 ? { offset: (0 + (Number(page) - 1) * limit), limit: limit } : { ...(id ? {} : { limit: 5 }) }),
             include: [{
                 model:Asistencia,
                 where: {
@@ -257,12 +257,21 @@ async function getSchoolPractices(id, allowDeleted, page) {
                 model:Schedule,
                 as: 'schedule',
                 required: false
-            }]
+            },
+            ...(id ? [] : [{
+                model:Escuela,
+                as: 'escuela',
+                attributes: ['nombre']
+            }])
+            ],
+            order: [
+                ['id', 'DESC']
+            ]
         });
 
         result['count'] = practicas.count;
         result['rows'] = practicas.rows;
-        result['limit'] = limit;
+        result['limit'] = (id ? limit : 5);
 
         return result;
     } catch (e) {
@@ -310,6 +319,50 @@ async function getIdentificationExistence(value) {
     }
 }
 
+async function getLevelResume(includeNonConfirmed = false) {
+    try {
+        const membersByLevel = await Miembro.findAll({
+            attributes: ['GradoId', [sequelize.fn('COUNT', sequelize.col('id')), 'memberCount']],
+            where: { 
+                deleted: false,
+                checked: { [Op.in]: includeNonConfirmed ? [true, false] : [true] },
+            },
+            group: ['GradoId'],
+            raw: true
+        });
+    
+        return membersByLevel;
+    }
+    catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
+async function getMembersResume(includeNonConfirmed = false) {
+    try {
+        const memberCounts = await Promise.all([
+            Miembro.count(),
+            Miembro.count({ where: { TipoMiembroId: 1 } }),
+            Miembro.count({ where: { TipoMiembroId: 2 } }),
+            ...(includeNonConfirmed ? [Miembro.count({ where: { checked: false } })] : [0]),
+        ]);
+    
+        const [total, active, inactive, nonConfirmed] = memberCounts;
+    
+        return {
+            total,
+            active,
+            inactive,
+            ...(includeNonConfirmed ? { nonConfirmed } : {})
+        }
+    }
+    catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
 module.exports = {
     getMember,
     getMembers,
@@ -324,5 +377,7 @@ module.exports = {
     getMembersNames,
     getHighlights,
     getSchoolSchedule,
-    getSchoolPractices
+    getSchoolPractices,
+    getLevelResume,
+    getMembersResume
 }
