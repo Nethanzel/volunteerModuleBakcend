@@ -98,6 +98,11 @@ url("./fonts/icofont.woff") format("woff");
   content: "\ea5d";
 }
 
+.icofont-arrow-left:before
+{
+  content: "\ea5c";
+}
+
 .icofont-refresh:before
 {
   content: "\efd1";
@@ -123,19 +128,14 @@ url("./fonts/icofont.woff") format("woff");
   content: "\eed8";
 }
 
-.icofont-file-tiff:before
-{
-  content: "\eb2b";
-}
-
 .icofont-file-document:before
 {
   content: "\eb0e";
 }
 
-.icofont-plus-circle:before
+.icofont-file-tiff:before
 {
-  content: "\efc0";
+  content: "\eb2b";
 }
 
 .icofont-duotone.icofont-plus-circle:before
@@ -146,6 +146,11 @@ url("./fonts/icofont.woff") format("woff");
 .icofont-duotone.icofont-plus-circle:after
 {
   content: "\13b8a";
+}
+
+.icofont-plus-circle:before
+{
+  content: "\efc0";
 }
 
 .icofont-close:before
@@ -201,11 +206,6 @@ url("./fonts/icofont.woff") format("woff");
 .icofont-star:before
 {
   content: "\f000";
-}
-
-.icofont-arrow-left:before
-{
-  content: "\ea5c";
 }
 
 .icofont-download:before
@@ -291,6 +291,26 @@ url("./fonts/icofont.woff") format("woff");
 .icofont-spinner:before
 {
   content: "\effa";
+}
+
+.icofont-badge:before
+{
+  content: "\eeaa";
+}
+
+.icofont-not-allowed:before
+{
+  content: "\efa9";
+}
+
+.icofont-thumbs-down:before
+{
+  content: "\f00b";
+}
+
+.icofont-thumbs-up:before
+{
+  content: "\f00c";
 }
 
 [class^="icofont-"].icofont-duotone,
