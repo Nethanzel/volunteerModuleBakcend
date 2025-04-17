@@ -126,7 +126,7 @@ function memberPrepare(props) {
     
     let newMember = {
         checked: false,
-        escuelaId: props["step_1"] ? Number(props["step_1"].escuela) : null,
+        escuelaId: props["step_1"] ? Number(props["step_1"].escuela) : (props["step_7"] ? props["step_7"].school : null),
 
         //Datos de salud del miembro
         assurance: props["step_3"].assurance.state,

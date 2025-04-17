@@ -98,7 +98,8 @@ const miembroMV = Joi.object({
         }).optional().allow(null)
     }).required(),
     step_7: Joi.object().keys({
-        hasSchool: Joi.boolean().required(),
+        isProfessor: Joi.boolean().required(),
+        school: Joi.number().optional().allow(null),
         schools: Joi.array().items(Joi.object({
             nombre: Joi.string().required(),
             provincia: Joi.number().required(),

@@ -18,7 +18,7 @@ router.post("/miembro", ValidateFields(miembroMV), async (req, res) => {
     let result = await createMember(memberPrepare(req.fields), image).catch(() => false);
     if (!result.result) return res.status(result.code).send({status: result.code, message: result.message});
 
-    if (req.fields.step_7?.hasSchool == true) {
+    if (req.fields.step_7?.isProfessor == true) {
         for (let school of req.fields.step_7.schools) {
             await createEscuela({...school, ...{ liderId: result.uid, deleted: true }}).catch(() => false);
         }
