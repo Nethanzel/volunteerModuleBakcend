@@ -28,7 +28,7 @@ async function generateMemberForm(member) {
     return await generate(html);
 }
 
-async function generateMembersForm(members, filters) {
+async function generateMembersForm(members, filters, useImage = false) {
     let font = fs.readFileSync(path.resolve("./src/reports/assets/Carme_Sans_Light.otf")).toString('base64');
     let boldFont = fs.readFileSync(path.resolve("./src/reports/assets/Carme_Sans_Bold.otf")).toString('base64');
 
@@ -42,6 +42,7 @@ async function generateMembersForm(members, filters) {
         customFontBold: `data:font/otf;base64,${boldFont}`,
         customFont: `data:font/otf;base64,${font}`,
         hasFilters: filters != null,
+        useImage,
         filters,
         members
     });

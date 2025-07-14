@@ -141,6 +141,10 @@ function prepMembers(members) {
 
         member.pos = i +1;
         member.classIndex = member.pos % 2;
+
+        if (member.Archivos && member.Archivos[0]) {
+            member.photo = `data:${member.Archivos[0].contentType};base64,` + member.Archivos[0].content.toString('base64');
+        }
     });
 
     members.queryTime = formatDate(new Date(), true);

@@ -31,7 +31,7 @@ async function getMember(id, allowDeleted, allowDeletedFiles = false, viewNonCof
     }
 }
 
-async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false, filters = null) {
+async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNonCofirmed = false, filters = null, includePhoto = false) {
     try {
         let result = {};
         filters = filters ? getFilters(filters) : null;
@@ -49,7 +49,7 @@ async function getMembers(page, allowDeleted, allowDeletedFiles = false, viewNon
                 { model: Grado },
                 { model: TipoMiembro },
                 { model: Escuela, as: "escuela", required: false },
-                ...(page == null ? [] : [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }])
+                ...(page == null && !includePhoto ? [] : [{ model: Archivo, where: { fileName: "Profile Photo" }, required: false }])
             ],
             ...(page == null ? { attributes:['nombre','apellido','nacimiento','referenceCode','celular','telefonoFijo','otherCountry','municipio','pais','estado','checked','deleted'] } : {}),
         });

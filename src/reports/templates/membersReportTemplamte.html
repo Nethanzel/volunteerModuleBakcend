@@ -241,6 +241,12 @@
                 border-bottom: 1px solid #eaeaea;
             }
 
+            .tableWrapper table .p-photo {
+                object-fit: cover;
+                height: 40px;
+                width: 40px;
+            }
+
             table {
                 border-collapse: collapse;
                 width: calc(100% - 20px);
@@ -338,6 +344,9 @@
                     <table>
                         <tr class="tHead">
                             <th>#</th>
+                            {{#if useImage}}
+                            <th>Foto</th>
+                            {{/if}}
                             <th>Código</th>
                             <th>Nombres</th>
                             <th>Apellidos</th>
@@ -350,6 +359,9 @@
                         {{#each members.rows}}
                         <tr class="row-{{this.classIndex}} {{#if this.checked}}{{else}}no-check{{/if}} {{#if this.deleted}}deleted{{/if}}">
                             <td>{{this.pos}}</td>
+                            {{#if this.photo}}
+                            <td><img src="{{this.photo}}" alt="foto" class="p-photo"></td>
+                            {{/if}}
                             <td>{{this.referenceCode}}</td>
                             <td>{{this.nombre}}</td>
                             <td>{{this.apellido}}</td>

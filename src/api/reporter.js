@@ -26,15 +26,15 @@ router.get("/print/member", ValidateHeader(authorizeSchema), authorizeGuard(), v
 });
 
 router.get("/print/members", ValidateHeader(authorizeSchema), authorizeGuard(), validatePermission(["QVL","PML"]), async (req, res) => {
-    let { filters } = req.query;
+    let { filters, includePhotos } = req.query;
 
     let filterValidation = ValidateFilters(memberQueryFilters, filters);
     if (!filterValidation.isValid) return res.status(filterValidation.status).send({ status: filterValidation.status, message: filterValidation.message });  
     
-    let miembros = await getMembers(null, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions), filterValidation.filters).catch(() => false);
+    let miembros = await getMembers(null, isAllowedToPermission(["QDI"], req.user.permissions), isAllowedToPermission(["QDF"], req.user.permissions), isAllowedToPermission(["VNC"], req.user.permissions), filterValidation.filters, JSON.parse(includePhotos)).catch(() => false);
     
     if(miembros?.count > 0) {
-        let pdf = await generateMembersForm(miembros, filterValidation.filters);
+        let pdf = await generateMembersForm(miembros, filterValidation.filters, JSON.parse(includePhotos));
         if (!pdf) return res.status(503).send({status: 503, message: "No se pudo generar el reporte."});
 
         res.setHeader("Content-Length", pdf.length);
