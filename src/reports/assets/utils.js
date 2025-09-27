@@ -155,5 +155,7 @@ function prepMembers(members) {
 module.exports = {
     prepMember,
     prepMembers,
-    convertFromBase64
+    convertFromBase64,
+    calcularEdad,
+    titleCase
 }

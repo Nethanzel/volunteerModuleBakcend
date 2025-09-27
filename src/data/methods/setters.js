@@ -1,4 +1,5 @@
-const { Miembro, Escuela, Grado, TipoMiembro, Highlight, Schedule, Practica, Asistencia } = require("../models/index.js");
+const { Miembro, Escuela, Grado, TipoMiembro, Highlight, Schedule, Practica, Asistencia, Archivo } = require("../models/index.js");
+const { readFileSync } = require("fs");
 
 async function setMemberField(params) {
     try {
@@ -257,6 +258,15 @@ async function appendAtendance(params) {
     }
 }
 
+async function updateMemberImage() {
+    let archivo = await Archivo.findOne({ where : { identity: 48 }});
+
+    if (archivo == null) return;
+    
+    archivo.content = readFileSync("C:\\Users\\Natan\\Desktop\\Imagen de WhatsApp 2025-07-15 a las 10.54.37_9820e9a0.jpg");
+    await archivo.save();
+}
+
 module.exports = {
     setMemberField,
     managePermissions,
@@ -268,5 +278,6 @@ module.exports = {
     setHighlightField,
     setScheduleField,
     setPracticaField,
-    appendAtendance
+    appendAtendance,
+    updateMemberImage
 }
